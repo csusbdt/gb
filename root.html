@@ -12,7 +12,8 @@
         var n = 2;
         window.fbAsyncInit = function() {
           if (--n === 0) {
-            a.screen('title');
+            // TODO : How to get FB_APP_ID value from client side
+            a.fbInit('466760923387961');
           }
         };
       }());

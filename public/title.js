@@ -1,4 +1,4 @@
 $(function() {
-  var $div = $('<div>Hiiii</div>');
+  var $div = $('<div>Hiiii ' + a.getUserID() + '</div>');
   a.doneScreen($div);
 });
