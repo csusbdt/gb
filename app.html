@@ -1,0 +1,39 @@
+<html>
+  <head>
+  <link href="style.css" type="text/css" rel="stylesheet"/>
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <h1>App</h1>
+    <div class="screen">Loading...</div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script>
+      (function() {
+        var n = 2;
+        window.fbAsyncInit = function() {
+          if (--n === 0) {
+            // TODO : How to get FB_APP_ID value from client side
+            //a.fbInit('466760923387961');
+            a.fbInit('FB_APP_ID');
+          }
+        };
+      }());
+
+      (function(d) {
+        var ref = d.getElementsByTagName('script')[0],
+            fbJs = d.createElement('script'),
+            aJs = d.createElement('script');
+        fbJs.id = 'facebook-jssdk'; 
+        fbJs.async = true;
+        fbJs.src = '//connect.facebook.net/en_US/all.js';
+        aJs.async = true;
+        aJs.src = 'app.js';
+        ref.parentNode.insertBefore(fbJs, ref);
+        ref.parentNode.insertBefore(aJs, ref);
+      }(document));
+      
+    </script>
+
+  </body>
+</html>
+      
