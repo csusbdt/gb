@@ -3,37 +3,41 @@ $(function() {
   var $_nextScreen;
   window.a = {};
   
-  a.doneScreen = function($nextScreen, speed){
-    if (speed === undefined) speed = 300;
-    if ($nextScreen !== undefined){
-      $_nextScreen = $nextScreen;
-    }
-    if (--n !== 0) return;
-    $('.screen').remove();
-    $_nextScreen.addClass('screen');
-    $('body').append($_nextScreen);        
-    $_nextScreen.fadeIn(speed, function() { n = -1; });
+  /* ------SCREEN Utilities-------- */
+  a.createBtn = function(btnTxt){
+    return $('<button>' + btnTxt + '</button>');
   };
-       
-  a.screen = function(screenName, speed) {
-    if (n !== -1) return;  // don't allow more than one transition at a time
-    n = 2;
-    if (speed === undefined) speed = 300;
-    
-    var ref = document.getElementsByTagName('script')[0],
-        screenJs = document.createElement('script');
-    screenJs.async = true;
-    screenJs.src = screenName + '.js';
-    ref.parentNode.insertBefore(screenJs, ref);
-      
-    $('.screen').fadeOut(speed, a.doneScreen);
+  
+  a.createDiv = function(text){
+    if (text === undefined) text = '';
+    return $('<div>' + text + '</div>');
   };
+  
+  a.createTxtBox = function(){
+    return $('<input></input>');
+  };
+  
+  a.createList = function(){
+    return $('<ul></ul>');
+  };
+  /* ------------------------------------------------------------- */
+  
+  a.screen = function(screenName, speed){
+    if (speed === undefined) speed = 300;
+    a.screenInit(screenName);
+    $('#'+a.currentScreen).fadeOut(speed, function() {$('#'+screenName).fadeIn(speed)});
+    a.currentScreen = screenName;
+  };
+  
+  a.currentScreen = 'loading';
+  
+  /* ----------------------------FB Business--------------------------------- */
   
   a.fbLogin = function(cb) {
       FB.login(function(response) {
         if (response.authResponse) {
-          console.log('?uid=' + response.authResponse.userID);
-          console.log('&token=' + response.authResponse.accessToken);
+          //console.log('?uid=' + response.authResponse.userID);
+          //console.log('&token=' + response.authResponse.accessToken);
           a.screen('title');
           //cb('');
         } else {
@@ -44,7 +48,6 @@ $(function() {
     };
     
   a.fbInit = function (fbAppId) {
-    console.log(fbAppId);
     FB.init({
       appId      : fbAppId,
       channelUrl : '://' + window.location.host + '/channel.html',
@@ -55,14 +58,40 @@ $(function() {
     FB.Canvas.setAutoGrow();
     FB.getLoginStatus(function(response) {
       if (response.status === 'connected') {
-        console.log('?uid=' + response.authResponse.userID);
-        console.log('&token=' + response.authResponse.accessToken);
+        //console.log('?uid=' + response.authResponse.userID);
+        //console.log('&token=' + response.authResponse.accessToken);
         a.screen('title');
       } else {
         a.screen('login');
       }
     });
   };
+  /* ------------------------------------------------------------- */
+  
+  
+  /* ------------------SCREEN INIT---------------------- */
+  a.initTitle = function(){
+    FB.api('/me', function(response) {
+      console.log('Screen init title');
+      $('#name').html('<a href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
+    });
+  };
+  
+  a.initGroupList = function(){
+      
+  };
+  /* ---------------------------------------- */
+  
+  (function(){
+    var initFuncs = {
+      groups : a.initGroupList,
+      title  : a.initTitle
+    };
+    a.screenInit = function(screenName){
+      console.log('initFunc = ' + screenName);
+      if (initFuncs.hasOwnProperty(screenName)) initFuncs[screenName](); 
+    };
+  }());
   
   fbAsyncInit();
  });

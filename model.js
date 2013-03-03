@@ -17,16 +17,19 @@ var dbOptions = {
 };
 
 var server = new Server(host, port, serverOptions);
-var client = new MongoClient(server, dbOptions);
+var mongoClient = new MongoClient(server, dbOptions);
 
-exports.client = client;
+exports.dbName = dbName;
+
+exports.mongoClient = mongoClient;
 
 // Make sure we can connect to database.
 // Throw any error to halt program.
 exports.init = function(cb) {
-  client.open(function(err, db) {
+  exports.mongoClient.open(function(err, mongoClient) {
+    mongoClient.db(dbName);
     if (err) throw err;
-    db.close(); 
+    mongoClient.close(); 
     cb();
   }); 
 };

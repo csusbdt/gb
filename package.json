@@ -3,10 +3,10 @@
     "version": "0.0.1",
     "description": "Grade Badge System",
     "dependencies": {
-        "mongodb": "1.2.11"
+        "mongodb": "1.2.13"
     },
     "engines": {
-        "node": "0.8.14",
-        "npm": "1.1.65"
+        "node": "0.8.16",
+        "npm": "1.1.69"
     }
 }

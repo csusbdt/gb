@@ -1,6 +1,7 @@
 var http                  = require('http');
 var router                = require('./router');
 var model                 = require('./model');
+var group                 = require('./model_group');
 
 // TODO: minify js and css as part of deployment process.
 // IDEA: minify at startup rather than as a build step.
@@ -26,9 +27,13 @@ process.env.FB_APP_ID  = process.env.FB_APP_ID  .replace(' ', '');
 process.env.APP_VER    = process.env.APP_VER    .replace(' ', '');
 
 // Run intializations before starting router.
+var document = {name:'Yoga Group', desc:'This is Yoga Group in San Bernardino', uid:'345445672' };
 var n = 2;
 function done() {
-  if (--n === 0) router.start();
+  if (--n === 0) {
+    router.start();
+    group.createGroup(document, function(err){if (err !== undefined) console.log('error in cb = ' + err)});
+  }  
 }
 model  .init(done);
 router .init(done);

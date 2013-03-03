@@ -1,11 +1,67 @@
 <html>
   <head>
+  <meta charset="utf-8">
+    <title>Grade Badge</title>
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    
+	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+      }
+    </style>
+	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css" rel="stylesheet">
+    <!--style type="text/css">
+      .thumbnail > img {
+        
+      }
+	  .thumbnails > li {
+	    float : left;
+		
+	  }
+    </style -->
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+	
   <link href="style.css" type="text/css" rel="stylesheet"/>
   </head>
   <body>
-    <div id="fb-root"></div>
-    <h1>App</h1>
-    <div class="screen">Loading...</div>
+    <div id="fb-root"></div>    
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">GradeBadge</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+			        <li><a href="#badges">My Badges</a></li>
+              <li><a href="#groups">My Groups</a></li>
+              <li id="name"></li>
+              <li id="login" style="display:none;"><button onclick="a.fbLogin()">Facebook Login</button></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    
+    <div id="loading" class="container" style="display:block;">Loading...</div>
+    <div id="login" class="container" style="display:none;"><button onclick="a.fbLogin()">Facebook Login</button></div>
+    <div id="title" class="container" style="display:none;">Welcome, </div>
+    <div id="groups" class="container" style="display:none;">Group List Page</div>
+
+    <footer style="text-align: center">
+        <p>&copy; Grade Badge 2013</p>
+    </footer>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>
       (function() {
@@ -33,7 +89,7 @@
       }(document));
       
     </script>
-
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
   </body>
 </html>
       
