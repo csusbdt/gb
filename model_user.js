@@ -1,6 +1,6 @@
 var client = require('./model').client;
 
-exports.createBadge = function(user, cb) {
+exports.createUser = function(user, cb) {
   model.mongoClient.open(function(err, mongoClient) {
     if (err) return cb(err);
     var db = mongoClient.db(model.dbName);
