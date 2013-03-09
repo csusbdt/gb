@@ -27,12 +27,12 @@ process.env.FB_APP_ID  = process.env.FB_APP_ID  .replace(' ', '');
 process.env.APP_VER    = process.env.APP_VER    .replace(' ', '');
 
 // Run intializations before starting router.
-var cg_doc = {name:'Yoga Group', desc:'This is Yoga Group in San Bernardino', uid:'345445672' };
+//var cg_doc = {name:'Yoga Group', desc:'This is Yoga Group in San Bernardino', uid:'345445672' };
 var n = 2;
 function done() {
   if (--n === 0) {
     router.start();
-    group.createGroup(cg_doc, function(err){if (err !== undefined) console.log('error in cb = ' + err)});
+    //group.createGroup(cg_doc, function(err){if (err !== undefined) console.log('error in cb = ' + err)});
   }  
 }
 model  .init(done);
