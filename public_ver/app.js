@@ -39,7 +39,7 @@ $(function() {
   screens.title.init = function(){
     FB.api('/me', function(response) {
       console.log('Screen init title');
-      $('#name').html('<a href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
+      $('#name').html('<a onclick="a.screen("profile")" href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
     });
   };
   
@@ -130,18 +130,17 @@ console.log('a.relogin()');
       a.creds.accessToken = response.authResponse.accessToken;
       cb();
     } else if (response.status === 'not_authorized') {
-      a.screen.next('login');
+      //a.screen.next('login');
     } else {
-      var $relogin = $('<button>Login to Facebook</button>');
-      $('.screen').hide();
-      $('body').append($relogin);
-      $relogin.click(function() {
-        $relogin.remove();
-        $('.screen').show();
-        a.login(cb);
-      });
-    }
-  }, true);
+      //var $relogin = $('<button>Login to Facebook</button>');
+      //$('.screen').hide();
+      //$('body').append($relogin);
+      //$relogin.click(function() {
+      //  $relogin.remove();
+      //  $('.screen').show();
+      //  a.login(cb);
+      }
+  }); 
 };
 
 a.fbLogin = function(cb) {

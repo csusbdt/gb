@@ -69,12 +69,11 @@ exports.readGroups = function(uid, cb) {
   model.mongoClient.open(function(err, mongoClient) {
     if (err) return cb(err);
     var db = mongoClient.db(model.dbName);
-    db.collection('group_admin_links').find(
-      uid
-    ).toArray(function(err, docs){
+    db.collection('group_admin_links').find(uid).toArray(function(err, docs){
       cb(docs);
-      mongoClient.close();  
-    }  
+      //mongoClient.close();  
+    });
+        
   });
 };
 

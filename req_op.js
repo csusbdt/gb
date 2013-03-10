@@ -45,6 +45,8 @@ exports.handle = function(req, res) {
         save_group(data, res);
       } if (pathname === '/op/read-groups') { 
         read_groups(data, res);
+      }if (pathname === '/op/save-user') { 
+        save_user(data, res);
       }else {
         //++exports.unknownOps;
       }
@@ -65,6 +67,19 @@ function save_group(data, res) {
   });
 };
 
+function save_user(data, res) {
+  console.log(JSON.stringify(data));
+  var group = { name: data.name, desc: data.desc, uid: data.uid };
+  model_group.createGroup(group, function(err) {
+    if (err) {
+      console.log(__filename + ' : save_group : ' + err.message);
+      return app_ajax.error(res);
+    }
+    console.log('group created');
+    return app_ajax.reply(res);
+  });
+};
+
 function read_groups(data, res) {
   console.log(JSON.stringify(data));
   var uid = { uid: data.uid };
@@ -73,7 +88,7 @@ function read_groups(data, res) {
       console.log(__filename + ' : save_group : ' + err.message);
       return app_ajax.error(res);
     }
-    console.log('group created');
+    console.log('group is read');
     return app_ajax.reply(res);
   });
 };
