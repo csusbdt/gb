@@ -1,4 +1,6 @@
 window.a = {};
+a.creds = {};
+a.m = {};
 
 /* ------------------SCREENS---------------------- */
 $(function() {
@@ -20,7 +22,8 @@ $(function() {
     screens.groups  = new Screen('groups');
     screens.title   = new Screen('title');
     screens.badges  = new Screen('badges');
-    screens.profile = new Screen('profile');      
+    screens.profile = new Screen('profile'); 
+    screens.profile = new Screen('login');
   }());
   
   var currentScreen = screens.loading;
@@ -60,13 +63,92 @@ $(function() {
   ------------------------------------------------------------- */
 });
 
- 
+a.m.readGroups = function(cb) { 
+  $.ajax({
+    url: '/op/read-groups',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken } )
+  })
+  .done(function(data) {
+    console.log(JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('group is read');
+      a.m.groups = data;
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
+
+
+$('#saveGroup').click(function() { 
+  console.log(JSON.stringify( { 'name': $('#gname').val(), 'desc': $('#gdesc').val(), 'accessToken': a.creds.accessToken } ));
+  $.ajax({
+    url: '/op/save-group',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'name': $('#gname').val(), 'desc': $('#gdesc').val(), 'accessToken': a.creds.accessToken } )
+  })
+  .done(function(data) {
+    console.log(JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      //$numDiv.html(data.error);
+    } else {
+      console.log('group is saved');
+      //$numDiv.append($('<span> saved</span>'));
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}); 
+
 /* ----------------------------FB Business--------------------------------- */
+a.fbRelogin = function(cb) {
+console.log('a.relogin()');
+  FB.getLoginStatus(function(response) {
+    if (response.status === 'connected') {
+      a.creds.uid = response.authResponse.userID;
+      a.creds.accessToken = response.authResponse.accessToken;
+      cb();
+    } else if (response.status === 'not_authorized') {
+      a.screen.next('login');
+    } else {
+      var $relogin = $('<button>Login to Facebook</button>');
+      $('.screen').hide();
+      $('body').append($relogin);
+      $relogin.click(function() {
+        $relogin.remove();
+        $('.screen').show();
+        a.login(cb);
+      });
+    }
+  }, true);
+};
+
 a.fbLogin = function(cb) {
   FB.login(function(response) {
     if (response.authResponse) {
-      //console.log('?uid=' + response.authResponse.userID);
-      //console.log('&token=' + response.authResponse.accessToken);
+      a.creds.uid = response.authResponse.userID;
+      a.creds.accessToken = response.authResponse.accessToken;
       a.screen('title');
       //cb('');
     } else {
@@ -87,8 +169,8 @@ a.fbInit = function (fbAppId) {
   FB.Canvas.setAutoGrow();
   FB.getLoginStatus(function(response) {
     if (response.status === 'connected') {
-      //console.log('?uid=' + response.authResponse.userID);
-      //console.log('&token=' + response.authResponse.accessToken);
+      a.creds.uid = response.authResponse.userID;
+      a.creds.accessToken = response.authResponse.accessToken;
       a.screen('title');
     } else {
       a.screen('login');

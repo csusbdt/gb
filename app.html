@@ -11,19 +11,7 @@
 	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
-        height: 100%;
-      }
-      #wrap {
-        min-height: 100%;
-        height: auto !important;
-        height: 100%;
-        margin: 0 auto -60px; /* the bottom margin is the negative value of the footer's height */
-      }
-      #footer, #push {
-        height: 60px; /* .push must be the same height as .footer */
-      }
-      #footer {
-        background-color: #f5f5f5;
+        padding-top: 60px;
       }
     </style>
 	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-responsive.css" rel="stylesheet">
@@ -45,7 +33,7 @@
   </head>
   <body>
     <div id="fb-root"></div>
-    <div id="wrap">
+    
     <div class="navbar navbar-inverse navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -93,8 +81,7 @@
     
     <!-- Groups Page -->
     <div id="groups" class="container" style="display:none;">
-      <button class="btn btn-primary" type="button">Add New Group</button>
-	     
+      <a href="#addGroup" role="button" class="btn" data-toggle="modal">Add New Group</a>	     
       <ul class="thumbnails">
         <li class="span4">
           <div class="thumbnail">
@@ -105,14 +92,25 @@
         </li>
 		  </ul>  
     </div>
-    <div id="push"></div>
-    </div>
+    
+    <div id="addGroup" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Add New Group</h3>
+      </div>
+      <div class="modal-body">
+      <p>Group Name        = <input type="text" id="gname"></p>
+      <p>Group Description = <input type="text" id="gdesc"></p>
+      </div>
+        <div class="modal-footer">
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+          <button id="saveGroup" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+  
     <footer style="text-align: center">
         <p>&copy; Grade Badge 2013</p>
     </footer>
-    <div id="footer">
-      Sticky Footer
-    </div>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script>
       (function() {

@@ -125,6 +125,7 @@ exports.init = function(cb) {
   send(options, function(data) {
     if (data instanceof Error) {
       console.log('fb.init: Failed to get app token. Could be bad app id or secret.');
+      console.log('Error from Facebook: ' + data.message);
       throw data;
     }
     if (data.access_token === undefined) {
@@ -138,6 +139,43 @@ exports.init = function(cb) {
   });
 };
 
+/* need to look at injection attacks through accessToken, etc. */
+
+// If user needs to login, then call cb with no arguments.
+exports.getUid = function(userAccessToken, cb) {
+  var result;
+  var options = {
+    hostname: 'graph.facebook.com',
+    path: '/debug_token' + 
+          '?input_token=' + userAccessToken +
+          '&access_token=' + appToken,
+    method: 'GET'
+  };
+  send(options, function(data) {
+    if (data instanceof Error) {
+      data.message += '\nfb.getUid: Failed.'
+      return cb(data);
+    }
+    if (data.data.is_valid === undefined) {
+      return cb(new Error(
+        'fb.getUid: data.is_valid undefined' +
+        '\nfb.getUid: Facebook returned: ' + JSON.stringify(data)
+      ));
+    }
+    if (!data.data.is_valid) { // access token not valid
+      return cb();
+    }
+    if (data.data.user_id === undefined) {
+      return cb(new Error(
+        'fb.getUid: id not returned by facebook.' +
+        '\nfb.getUid: Facebook returned: ' + JSON.stringify(data)
+      ));
+    }
+    cb(data.data.user_id);
+  });
+};
+
+
 // Exchange a short-lived access token for a long-lived one,
 // which we call a secret.
 exports.exchangeAccessToken = function(accessToken, cb) {
@@ -145,8 +183,8 @@ exports.exchangeAccessToken = function(accessToken, cb) {
   var options = {
     hostname: 'graph.facebook.com',
     path: '/oauth/access_token' + 
-          '?client_id=' + process.env.FB_APP_ID +
-          '&client_secret=' + process.env.FB_SECRET +
+          '?client_id=' + process.env.FACEBOOK_APP_ID +
+          '&client_secret=' + process.env.FACEBOOK_SECRET +
           '&grant_type=fb_exchange_token' +
           '&fb_exchange_token=' + accessToken,
     method: 'GET'

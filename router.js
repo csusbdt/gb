@@ -1,10 +1,12 @@
-var http        = require('http');
-var url         = require('url');
+var http         = require('http');
+var url          = require('url');
 var app_http     = require('./app_http');
 var req_root     = require('./req_root');
 var req_mem      = require('./req_mem');
 var req_app      = require('./req_app');
 var req_file     = require('./req_file');
+var req_op       = require('./req_op');
+var req_counters = require('./req_counters');
 
 var verpath  = '/' + process.env.APP_VER + '/';
 
@@ -23,11 +25,13 @@ exports.init = function(cb) {
 
 function route(req, res) {
   var pathname = url.parse(req.url).pathname;
-  if      (pathname                           === '/')      req_root    .handle(req, res)
-  else if (pathname                           === verpath)  req_app     .handle(req, res)
-  else if (pathname.substr(0, verpath.length) === verpath)  req_verdir  .handle(req, res);
-  else if (pathname                           === '/mem')   req_mem     .handle(req, res);
-  else                                                      req_rootdir .handle(req, res);
+  if      (pathname                           === '/')          req_root    .handle(req, res)
+  else if (pathname                           === verpath)      req_app     .handle(req, res)
+  else if (pathname.substr(0, verpath.length) === verpath)      req_verdir  .handle(req, res)
+  else if (pathname.substr(0, 4)              === '/op/')       req_op      .handle(req, res)
+  else if (pathname                           === '/mem')       req_mem     .handle(req, res)
+  else if (pathname                           === '/counters')  req_counters .handle(req, res)
+  else                                                          req_rootdir .handle(req, res);
 }
 
 function requestHandler(req, res) {

@@ -8,13 +8,12 @@ exports.createGroup = function(group, cb) {
     db.collection('groups').insert(
       group,
       function(err) {
-        //mongoClient.close();
         if (err) return cb(err); 
         var doc = { gid : group._id, uid : group.uid };
         db.collection('group_admin_links').insert(
           doc,
           function(err) {
-            //mongoClient.close();
+            mongoClient.close();
             if (err) return cb(err); 
             cb();
           }
@@ -31,7 +30,7 @@ exports.addUser = function(group_user, cb) {
     db.collection('group_user_links').insert(
       group_user,
       function(err) {
-        //mongoClient.close();
+        mongoClient.close();
         if (err) return cb(err); 
       }
     );  
@@ -65,3 +64,17 @@ exports.addBadge = function(group_badge, cb) {
     );  
   });
 };
+
+exports.readGroups = function(uid, cb) {
+  model.mongoClient.open(function(err, mongoClient) {
+    if (err) return cb(err);
+    var db = mongoClient.db(model.dbName);
+    db.collection('group_admin_links').find(
+      uid
+    ).toArray(function(err, docs){
+      cb(docs);
+      mongoClient.close();  
+    }  
+  });
+};
+
