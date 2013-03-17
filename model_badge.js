@@ -31,7 +31,7 @@ exports.assignBadge = function(badge_user, cb) {
     db.collection('badge_user_links').insert(
       badge_user,
       function(err) {
-        //mongoClient.close();
+        mongoClient.close();
         if (err) return cb(err); 
       }
     );  

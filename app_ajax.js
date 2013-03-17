@@ -34,11 +34,11 @@ exports.parse = function(req, cb) {
 };
 
 // Send the client data as a JSON string.
-exports.reply = function(res, data) {
+exports.data = function(res, data) {
   if (data === undefined) {
     data = {};
   }
-  var buf = new Buffer(JSON.stringify(data), 'utf8');
+  var buf = new Buffer(JSON.stringify({'data' : data}), 'utf8');
   res.writeHead(200, {
     'Content-Type': 'application/json; charset=UTF-8',
     'Content-Length': buf.length,
@@ -61,12 +61,15 @@ exports.error = function(res, error) {
   res.end(buf);
 };
 
-// Send the client an empty JSON object, which signifies successful operation.
-exports.ok = function(res) {
-  exports.reply(res, {});
-};
-
 // Tell client to login.
 exports.login = function(res) {
-  exports.reply(res, { login: true });
+  //exports.reply(res, { login: true });
+  var buf = new Buffer(JSON.stringify({'login' : true}), 'utf8');
+  res.writeHead(200, {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Content-Length': buf.length,
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache, no-store'
+  });
+  res.end(buf);
 };

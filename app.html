@@ -87,15 +87,10 @@
     
     <!-- Groups Page -->
     <div id="groups" class="container" style="display:none;">
-      <a href="#addGroupModal" role="button" class="btn" data-toggle="modal">Add New Group</a>	     
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img class="pull-left hidden-phone" src="http://profile.ak.fbcdn.net/hprofile-ak-ash4/274294_699367401_6957527_s.jpg" alt="">
-            <h3>Group Title</h3>
-            <p>Group Description</p>
-          </div>
-        </li>
+      <a href="#addGroupModal" role="button" class="btn" data-toggle="modal">Add New Group</a>
+      <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button">Refresh</button>      
+      <ul id="group_list" class="thumbnails">
+        <!-- auto generated -->
 		  </ul>  
     </div>
     
@@ -111,7 +106,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button id="saveGroup" class="btn btn-primary">Save changes</button>
+        <button id="saveGroup" data-dismiss="modal" onclick="a.c.saveNewGroup()" class="btn btn-primary">Save changes</button>
       </div>
     </div>
   

@@ -44,8 +44,9 @@ exports.addAdmin = function(group_admin, cb) {
     db.collection('group_admin_links').insert(
       group_admin,
       function(err) {
-        //mongoClient.close();
-        if (err) return cb(err); 
+        mongoClient.close();
+        if (err) return cb(err);
+        cb();        
       }
     );  
   });
@@ -58,22 +59,31 @@ exports.addBadge = function(group_badge, cb) {
     db.collection('group_badge_links').insert(
       group_admin,
       function(err) {
-        //mongoClient.close();
-        if (err) return cb(err); 
+        mongoClient.close();
+        if (err) return cb(err);
       }
     );  
   });
 };
 
-exports.readGroups = function(uid, cb) {
+exports.readAdminGroups = function(user, cb) {
   model.mongoClient.open(function(err, mongoClient) {
-    if (err) return cb(err);
+    if (err) {mongoClient.close(); return cb(err);}
     var db = mongoClient.db(model.dbName);
-    db.collection('group_admin_links').find(uid).toArray(function(err, docs){
-      cb(docs);
-      //mongoClient.close();  
-    });
-        
+    db.collection('group_admin_links', {'gid' : true}).find(user).toArray(function(err, group_admin_links){
+      if (err) {mongoClient.close(); return cb(err);}
+      console.log('model_group readAdminGroups group_admin_links = '+ JSON.stringify(group_admin_links));
+      
+      var group_ids = group_admin_links.map(function(group_admin_link) {return group_admin_link.gid;});
+      db.collection('groups').find({'_id' : {$in: group_ids} }).toArray(function(err, groups){
+        mongoClient.close();
+        if (err) return cb(err);
+        console.log('model_group readAdminGroups groups array = '+ JSON.stringify(groups));  
+        user.groups = groups;
+        cb();
+      });
+
+    });    
   });
 };
 

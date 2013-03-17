@@ -43,9 +43,9 @@ exports.handle = function(req, res) {
       if (pathname === '/op/save-group') {
         //++exports.setNumRequests;
         save_group(data, res);
-      } if (pathname === '/op/read-groups') { 
-        read_groups(data, res);
-      }if (pathname === '/op/save-user') { 
+      }else if (pathname === '/op/read-admin-groups') { 
+        read_admin_groups(data, res);
+      }else if (pathname === '/op/save-user') { 
         save_user(data, res);
       }else {
         //++exports.unknownOps;
@@ -55,15 +55,15 @@ exports.handle = function(req, res) {
 }
 
 function save_group(data, res) {
-  console.log(JSON.stringify(data));
+  console.log('req_op save_group input = ' + JSON.stringify(data));
   var group = { name: data.name, desc: data.desc, uid: data.uid };
   model_group.createGroup(group, function(err) {
     if (err) {
       console.log(__filename + ' : save_group : ' + err.message);
       return app_ajax.error(res);
     }
-    console.log('group created');
-    return app_ajax.reply(res);
+    console.log('group created with id = ' + group._id);
+    return app_ajax.data(res, {gid : group._id} );
   });
 };
 
@@ -76,19 +76,19 @@ function save_user(data, res) {
       return app_ajax.error(res);
     }
     console.log('group created');
-    return app_ajax.reply(res);
+    return app_ajax.data(res);
   });
 };
 
-function read_groups(data, res) {
-  console.log(JSON.stringify(data));
-  var uid = { uid: data.uid };
-  model_group.readGroups(uid, function(err) {
-    if (err) {
-      console.log(__filename + ' : save_group : ' + err.message);
+function read_admin_groups(data, res) {
+  console.log('req_op read_admin_groups input = ' + JSON.stringify(data));
+  var user = { uid: data.uid };
+  model_group.readAdminGroups(user, function(data) {
+    if (data instanceof Error) {
+      console.log(__filename + ' : read_admin_group : ' + data.message);
       return app_ajax.error(res);
     }
-    console.log('group is read');
-    return app_ajax.reply(res);
+    console.log('admin_group is read = ' + JSON.stringify(user.groups));
+    return app_ajax.data(res, user.groups);
   });
 };

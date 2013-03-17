@@ -1,6 +1,7 @@
 window.a = {};
 a.creds = {};
 a.m = {};
+a.c = {};
 
 /* ------------------SCREENS---------------------- */
 $(function() {
@@ -35,12 +36,37 @@ $(function() {
     currentScreen.transitionTo(speed, newScreen);
     currentScreen = newScreen;
   };
+  
+  a.refresh = function(){
+    currentScreen.refresh();
+  };
 
+  a.rebuild = function(){
+    currentScreen.rebuild();
+  };
+  
   screens.title.init = function(){
     FB.api('/me', function(response) {
       console.log('Screen init title');
       $('#name').html('<a onclick="a.screen("profile")" href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
     });
+  };
+  
+  screens.groups.refresh = function(){   
+    a.m.readGroups(function() {
+      screens.groups.rebuild();
+    });
+  };
+  
+  screens.groups.rebuild = function(){
+    $('#group_list > li').remove();
+    a.m.groups.forEach(function(group, i){
+        $('#group_list').append('<li class="span4"><div class="thumbnail"><h3>'+ group.name +'</h3><p>'+ group.desc +'</p></div></li>');  
+    });
+  };
+  
+  screens.groups.init = function(){
+    if (a.m.groups === undefined) screens.groups.refresh();
   };
   
   /* ------SCREEN Utilities-------- 
@@ -62,17 +88,19 @@ $(function() {
   };
   ------------------------------------------------------------- */
 });
+/*-----   END OF SCREENS ------------------ */
 
+/*------------------ MODEL --------------------- */
 a.m.readGroups = function(cb) { 
   $.ajax({
-    url: '/op/read-groups',
+    url: '/op/read-admin-groups',
     type: 'post',
     dataType: 'json',
     cache: false,
     data: JSON.stringify( { 'accessToken': a.creds.accessToken } )
   })
   .done(function(data) {
-    console.log(JSON.stringify(data));
+    console.log('app.js data = '+ JSON.stringify(data));
     //if (data.login !== undefined) {
       //a.relogin(function() { $saveBtn.click(); });
     //} else 
@@ -81,7 +109,7 @@ a.m.readGroups = function(cb) {
       cb(data.error);
     } else {
       console.log('group is read');
-      a.m.groups = data;
+      a.m.groups = data.data;
       cb();
     }
   })
@@ -92,9 +120,11 @@ a.m.readGroups = function(cb) {
 }; 
 
 
+/*----------- END OF MODEL ---------------- */
 
-$('#saveGroup').click(function() { 
-  console.log(JSON.stringify( { 'name': $('#gname').val(), 'desc': $('#gdesc').val(), 'accessToken': a.creds.accessToken } ));
+/*------------------- CONTROLER ---------------- */
+a.c.saveNewGroup = function() { 
+  //console.log(JSON.stringify( { 'name': $('#gname').val(), 'desc': $('#gdesc').val(), 'accessToken': a.creds.accessToken } ));
   $.ajax({
     url: '/op/save-group',
     type: 'post',
@@ -104,22 +134,29 @@ $('#saveGroup').click(function() {
   })
   .done(function(data) {
     console.log(JSON.stringify(data));
-    //if (data.login !== undefined) {
-      //a.relogin(function() { $saveBtn.click(); });
-    //} else 
+    
+    if (data.login !== undefined) {
+      a.fbRelogin(function() { $saveBtn.click(); });
+    } else 
     if (data.error !== undefined) {
       console.log('error = ' + data.error);
       //$numDiv.html(data.error);
-    } else {
-      console.log('group is saved');
-      //$numDiv.append($('<span> saved</span>'));
+    }else{
+      console.log('group is saved, id = ' + JSON.stringify(data.data));
+      $('#addGroupModal').hide();
+      a.screen('groups');
+      a.m.groups.push({'_id': data.data.gid, 'name': $('#gname').val(), 'desc': $('#gdesc').val() });
+      a.rebuild();
     }
   })
   .fail(function(jqxhr, textStatus, errorThrown) {
     if (errorThrown) console.log('Error: ' + errorThrown);
     else console.log('Error: ' + textStatus);
   });
-}); 
+}; 
+
+
+/* ----------------- END OF CONTROLLER ------------- */
 
 /* ----------------------------FB Business--------------------------------- */
 a.fbRelogin = function(cb) {
