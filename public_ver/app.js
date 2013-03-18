@@ -48,7 +48,7 @@ $(function() {
   screens.title.init = function(){
     FB.api('/me', function(response) {
       console.log('Screen init title');
-      $('#name').html('<a onclick="a.screen("profile")" href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
+      $('#name').html('<a href="#" onclick="a.screen(\'profile\')"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
     });
   };
   

@@ -42,11 +42,11 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" onclick="a.screen('title')" href="#title">GradeBadge</a>
+          <a class="brand" onclick="a.screen('title')">GradeBadge</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-			        <li><a onclick="a.screen('badges')">My Badges</a></li>
-              <li><a onclick="a.screen('groups')">My Groups</a></li>
+			        <li><a href="#" onclick="a.screen('badges')">My Badges</a></li>
+              <li><a href="#" onclick="a.screen('groups')">My Groups</a></li>
               <li id="name"></li>
               <li id="login" style="display:none;"></li>
             </ul>
@@ -55,7 +55,12 @@
       </div>
     </div>
     
-    <div id="loading" class="container" style="display:block;">Loading...</div>
+    <div id="loading" class="container" style="display:block;">
+      <div id="loading_bar" class="progress progress-striped active">
+        <div class="bar" style="width: 0%;"></div>
+      </div>  
+    </div>
+    
     <div id="login" class="container" style="display:none;"></div>
     
     <!-- Profile Page-->
@@ -156,6 +161,18 @@
         ref.parentNode.insertBefore(aJs, ref);
       }(document));
       
+      var progress = setInterval(function() {
+        var $bar = $('.bar');
+      
+        if ($bar.width()==400) {
+          clearInterval(progress);
+          $('.progress').removeClass('active');
+        } else {
+          $bar.width($bar.width()+40);
+        }
+        $bar.text($bar.width()/4 + "%");
+      }, 200);
+    
     </script>
     
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
