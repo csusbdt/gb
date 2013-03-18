@@ -24,7 +24,7 @@ $(function() {
     screens.title   = new Screen('title');
     screens.badges  = new Screen('badges');
     screens.profile = new Screen('profile'); 
-    screens.profile = new Screen('login');
+    screens.login = new Screen('login');
   }());
   
   var currentScreen = screens.loading;
@@ -50,6 +50,11 @@ $(function() {
       console.log('Screen init title');
       $('#name').html('<a onclick="a.screen("profile")" href="#profile"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
     });
+  };
+  
+  screens.login.init = function(){
+    screens.login.$mainDiv.html('<button class="btn btn-primary" type="button" onclick="a.fbLogin()">Facebook Login</button>');
+    $('#loginModal').modal('show');
   };
   
   screens.groups.refresh = function(){   
@@ -185,6 +190,7 @@ a.fbLogin = function(cb) {
     if (response.authResponse) {
       a.creds.uid = response.authResponse.userID;
       a.creds.accessToken = response.authResponse.accessToken;
+      $('#loginModal').modal('hide');
       a.screen('title');
       //cb('');
     } else {

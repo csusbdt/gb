@@ -1,35 +1,28 @@
-var MongoClient = require('mongodb').MongoClient;
 var Server      = require('mongodb').Server;
+var MongoClient = require('mongodb').MongoClient;
+var assert      = require('assert');
 
-var host   = process.env.MONGO_HOST;
-var port   = parseInt(process.env.MONGO_PORT, 10);
-var dbName = process.env.MONGO_DB;
-
-var serverOptions = {
-  auto_reconnect: true, 
-  poolSize: 20
-};
-
-var dbOptions = {
-  retryMiliSeconds: 5000, 
-  numberOfRetries: 4,
-  w: 1
-};
-
-var server = new Server(host, port, serverOptions);
-var mongoClient = new MongoClient(server, dbOptions);
-
-exports.dbName = dbName;
-
-exports.mongoClient = mongoClient;
-
-// Make sure we can connect to database.
+// Establish database connection pool.
+// Export the database connection object.
 // Throw any error to halt program.
 exports.init = function(cb) {
-  exports.mongoClient.open(function(err, mongoClient) {
-    mongoClient.db(dbName);
+  var serverOptions = {
+    auto_reconnect: true, 
+    poolSize: 20
+  };
+  var dbOptions = {
+    retryMiliSeconds: 5000, 
+    numberOfRetries: 4,
+    w: 1
+  };
+  var connectOptions = {
+    db: dbOptions,
+    server: serverOptions
+  };
+  MongoClient.connect(process.env.MONGO_URI, connectOptions, function(err, db) {
     if (err) throw err;
-    mongoClient.close(); 
+    assert(db !== null);
+    exports.db = db;
     cb();
   }); 
 };

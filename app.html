@@ -45,10 +45,10 @@
           <a class="brand" onclick="a.screen('title')" href="#title">GradeBadge</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-			        <li><a onclick="a.screen('badges')" href="#badges">My Badges</a></li>
-              <li><a onclick="a.screen('groups')" href="#groups">My Groups</a></li>
+			        <li><a onclick="a.screen('badges')">My Badges</a></li>
+              <li><a onclick="a.screen('groups')">My Groups</a></li>
               <li id="name"></li>
-              <li id="login" style="display:none;"><button class="btn btn-primary" type="button" onclick="a.fbLogin()">Facebook Login</button></li>
+              <li id="login" style="display:none;"></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -56,7 +56,7 @@
     </div>
     
     <div id="loading" class="container" style="display:block;">Loading...</div>
-    <div id="login" class="container" style="display:none;"><button class="btn btn-primary" type="button" onclick="a.fbLogin()">Facebook Login</button></div>
+    <div id="login" class="container" style="display:none;"></div>
     
     <!-- Profile Page-->
     <div id="profile" class="container" style="display:none;">
@@ -66,8 +66,8 @@
     <!-- Title Page-->
     <div id="title" class="container" style="display:none;">
       Welcome, this title page.
-      <button onclick="a.screen('groups')" href="#groups" class="btn btn-primary">Group</button>
-      <button onclick="a.screen('badges')" href="#badges" class="btn btn-primary">Badge</button>
+      <button onclick="a.screen('groups')" class="btn btn-primary">Group</button>
+      <button onclick="a.screen('badges')" class="btn btn-primary">Badge</button>
     </div>
     
     <!-- Badge Page -->
@@ -117,7 +117,7 @@
         <h3 id="myModalLabel">Facebook Login</h3>
       </div>
       <div class="modal-body">
-        <button class="btn btn-primary" type="button" onclick="a.fbRelogin()">Facebook Login</button>
+        <button class="btn btn-primary" type="button" onclick="a.fbLogin()">Facebook Login</button>
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
