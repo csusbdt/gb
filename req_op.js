@@ -5,12 +5,12 @@ var model_user    = require('./model_user');
 var model_group   = require('./model_group');
 var fb            = require('./fb');
 
-/*---
 exports.loginReplies   = 0;
-exports.getNumRequests = 0;
-exports.setNumRequests = 0;
+exports.saveGroup = 0;
+exports.readAdminGroup = 0;
+exports.saveUser = 0;
 exports.unknownOps     = 0;
---*/
+
 /*
    All incoming ajax requests are submitted by POST
    and contain data encoded in json.
@@ -31,7 +31,7 @@ exports.handle = function(req, res) {
     
     fb.getUid(data.accessToken, function(uid) {
       if (uid === undefined) { // user needs to login
-        //++exports.loginReplies;
+        ++exports.loginReplies;
         return app_ajax.login(res);
       }
       if (uid instanceof Error) {
@@ -41,14 +41,16 @@ exports.handle = function(req, res) {
       data.uid = uid;
       var pathname = url.parse(req.url).pathname;
       if (pathname === '/op/save-group') {
-        //++exports.setNumRequests;
+        ++exports.saveGroup;
         save_group(data, res);
-      }else if (pathname === '/op/read-admin-groups') { 
+      }else if (pathname === '/op/read-admin-groups') {
+        ++exports.readAdminGroup;
         read_admin_groups(data, res);
       }else if (pathname === '/op/save-user') { 
+        ++exports.saveUser;
         save_user(data, res);
       }else {
-        //++exports.unknownOps;
+        ++exports.unknownOps;
       }
     });
   });
@@ -59,7 +61,7 @@ function save_group(data, res) {
   var group = { name: data.name, desc: data.desc, uid: data.uid };
   model_group.createGroup(group, function(err) {
     if (err) {
-      console.log(__filename + ' : save_group : ' + err.message);
+      logger.error(__filename + ' : save_group : ' + err.message);
       return app_ajax.error(res);
     }
     console.log('group created with id = ' + group._id);
@@ -72,7 +74,7 @@ function save_user(data, res) {
   var group = { name: data.name, desc: data.desc, uid: data.uid };
   model_group.createGroup(group, function(err) {
     if (err) {
-      console.log(__filename + ' : save_group : ' + err.message);
+      logger.error(__filename + ' : save_group : ' + err.message);
       return app_ajax.error(res);
     }
     console.log('group created');
@@ -85,7 +87,7 @@ function read_admin_groups(data, res) {
   var user = { uid: data.uid };
   model_group.readAdminGroups(user, function(data) {
     if (data instanceof Error) {
-      console.log(__filename + ' : read_admin_group : ' + data.message);
+      logger.error(__filename + ' : read_admin_group : ' + data.message);
       return app_ajax.error(res);
     }
     console.log('admin_group is read = ' + JSON.stringify(user.groups));
