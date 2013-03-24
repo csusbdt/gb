@@ -2,6 +2,7 @@ window.a = {};
 a.creds = {};
 a.m = {};
 a.c = {};
+a.v = {};
 
 /* ------------------SCREENS---------------------- */
 $(function() {
@@ -25,6 +26,8 @@ $(function() {
     screens.badges  = new Screen('badges');
     screens.profile = new Screen('profile'); 
     screens.login = new Screen('login');
+    screens.groupBadges = new Screen('groupBadges');
+    screens.badgeMembers = new Screen('badgeMembers');
   }());
   
   var currentScreen = screens.loading;
@@ -57,16 +60,84 @@ $(function() {
     $('#loginModal').modal('show');
   };
   
+  screens.groupBadges.init = function(){
+    console.log('Curr Group = ' +JSON.stringify(a.v.currGroup));
+    $('#groupname').html('<h2>'+ a.v.currGroup.name +'</h2>');
+    if (a.v.currGroup.badges === undefined) screens.groupBadges.refresh();
+  };
+  
+  screens.groupBadges.refresh = function(){   
+    a.m.readGroupBadges(function() {
+      screens.groupBadges.rebuild();
+    });
+  };
+  
+  screens.badgeMembers.init = function(){
+    console.log('Curr Badge = ' +JSON.stringify(a.v.currBadge));
+    $('#badgename').html('<h2>'+ a.v.currBadge.name +'</h2>');
+    if (a.v.currBadge.members === undefined) screens.badgeMembers.refresh();
+  };
+  
+  screens.badgeMembers.refresh = function(){   
+    a.m.readBadgeMembers(function() {
+      screens.badgeMembers.rebuild();
+    });
+  };
+  
   screens.groups.refresh = function(){   
     a.m.readGroups(function() {
       screens.groups.rebuild();
     });
   };
   
+  screens.badgeMembers.rebuild = function(){
+    $('#badge_members_list > li').remove();
+    a.v.currBadge.members.forEach(function(member, i){
+        $('#badge_members_list').append(
+          '<li class="span4">' +
+            '<div class="thumbnail">' +
+              '<h3>'+ member.name +'</h3>' +
+              '<p>'+ member.uid +'</p>' +
+              '<p>Status earned</p>' +
+              '<p>photo, # badge earned</p>' +
+              '<button id="group_edit" class="btn btn-primary" onclick="" type="button">' +
+                '<i class="icon-certificate icon-white"></i> Assign (not done)</button>' +
+            '</div>' +
+          '</li>'
+        );  
+    });
+  };
+  
+  screens.groupBadges.rebuild = function(){
+    $('#group_badges_list > li').remove();
+    a.v.currGroup.badges.forEach(function(badge, i){
+        $('#group_badges_list').append(
+          '<li class="span4">' +
+            '<div class="thumbnail">' +
+              '<h3>'+ badge.name +'</h3>' +
+              '<p>'+ badge.desc +'</p>' +
+              '<p>'+ badge.pict +'</p>' +
+              '<button id="assign_badge" class="btn btn-primary" onclick="a.v.setCurrBadge('+i+')" type="button">' +
+                '<i class="icon-user icon-white"></i> Assign Badge</button>' + 
+            '</div>' +
+          '</li>'
+        );  
+    });
+  };
+  
   screens.groups.rebuild = function(){
-    $('#group_list > li').remove();
+    $('#groups_list > li').remove();
     a.m.groups.forEach(function(group, i){
-        $('#group_list').append('<li class="span4"><div class="thumbnail"><h3>'+ group.name +'</h3><p>'+ group.desc +'</p></div></li>');  
+        $('#groups_list').append(
+          '<li class="span4">' +
+            '<div class="thumbnail">' +
+              '<h3>'+ group.name +'</h3>' +
+              '<p>'+ group.desc +'</p>' +
+              '<button id="group_edit" class="btn btn-primary" onclick="a.v.setCurrGroup('+i+')" type="button">' +
+                '<i class="icon-certificate icon-white"></i> Badges</button>' +
+            '</div>' +
+          '</li>'
+        );  
     });
   };
   
@@ -115,6 +186,7 @@ a.m.readGroups = function(cb) {
     } else {
       console.log('group is read');
       a.m.groups = data.data;
+      a.m.groups.sort(function(a,b) { return a.name < b.name ? -1 : 1});
       cb();
     }
   })
@@ -124,6 +196,63 @@ a.m.readGroups = function(cb) {
   });
 }; 
 
+a.m.readGroupBadges = function(cb) { 
+  $.ajax({
+    url: '/op/read-group-badges',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid' : a.v.currGroup._id } )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('badges are read');
+      a.v.currGroup.badges = data.data;
+      a.v.currGroup.badges.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
+a.m.readBadgeMembers = function(cb) { 
+  $.ajax({
+    url: '/op/read-badge-members',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid' : a.v.currGroup._id, 'bid' : a.v.currBadge._id } )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('members are read');
+      a.v.currBadge.members = data.data;
+      a.v.currBadge.members.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
 
 /*----------- END OF MODEL ---------------- */
 
@@ -160,8 +289,55 @@ a.c.saveNewGroup = function() {
   });
 }; 
 
+a.c.saveNewBadge = function() { 
+  $.ajax({
+    url: '/op/save-badge',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'name': $('#bname').val(), 'desc': $('#bdesc').val(), 'pict': $('#bpict').val(), 'gid': a.v.currGroup._id, 'accessToken': a.creds.accessToken } )
+  })
+  .done(function(data) {
+    console.log(JSON.stringify(data));
+    
+    if (data.login !== undefined) {
+      a.fbRelogin(function() { $saveBtn.click(); });
+    } else if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      //$numDiv.html(data.error);
+    }else{
+      console.log('badge is saved, id = ' + JSON.stringify(data.data));
+      $('#addBadgeModal').hide();
+      a.screen('groupBadges');
+      a.v.currGroup.badges.push({'_id': data.data.bid, 'name': $('#bname').val(), 'desc': $('#bdesc').val(), 'pict': $('#bpict').val(), 'gid': a.v.currGroup._id });
+      a.rebuild();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
 
 /* ----------------- END OF CONTROLLER ------------- */
+
+/*------------------ VIEW ----------------- */
+a.v.currGroup = null;
+a.v.setCurrGroup = function(i) {
+  $('#group_badges_list > li').remove();
+  a.v.currGroup = a.m.groups[i];
+  a.screen('groupBadges');
+};
+
+a.v.currBadge = null;
+a.v.setCurrBadge = function(i) {
+  $('#group_members_list > li').remove();
+  a.v.currBadge = a.v.currGroup.badges[i];
+  a.screen('badgeMembers');
+};
+/* ----------------- END OF VIEW ------------- */
+
 
 /* ----------------------------FB Business--------------------------------- */
 a.fbRelogin = function(cb) {
