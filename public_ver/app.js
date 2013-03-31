@@ -198,7 +198,7 @@ a.m.readGroups = function(cb) {
 
 a.m.readGroupBadges = function(cb) { 
   $.ajax({
-    url: '/op/read-group-badges',
+    url: '/op/read-badges-by-group',
     type: 'post',
     dataType: 'json',
     cache: false,

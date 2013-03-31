@@ -4,8 +4,10 @@ var app_ajax      = require('./app_ajax');
 var fb            = require('./fb');
 var model_group   = require('./model_group');
 
-var op_save_group = require('./op_save_group');
+var op_save_group           = require('./op_save_group');
+var op_save_badge           = require('./op_save_badge');
 var op_read_groups_by_admin = require('./op_read_groups_by_admin');
+var op_read_badges_by_group = require('./op_read_badges_by_group');
 
 exports.loginReplies   = 0;
 exports.saveGroup = 0;
@@ -54,9 +56,9 @@ exports.handle = function(req, res) {
       }else if (pathname === '/op/read-groups-by-admin') {
         ++exports.readAdminGroup;
         op_read_groups_by_admin.handle(data, res);
-      }else if (pathname === '/op/read-group-badges') {
+      }else if (pathname === '/op/read-badges-by-group') {
         //++exports.readAdminGroup;
-        read_group_badges(data, res);
+        op_read_badges_by_group.handle(data, res);
       }else if (pathname === '/op/read-badge-members') {
         //++exports.readAdminGroup;
         read_badge_members(data, res);
@@ -65,7 +67,7 @@ exports.handle = function(req, res) {
         read_group_members(data, res);  
       }else if (pathname === '/op/save-badge') {
         //++exports.readAdminGroup;
-        save_badge(data, res);        
+        op_save_badge.handle(data, res);        
       }else if (pathname === '/op/save-user') { 
         ++exports.saveUser;
         save_user(data, res);
@@ -77,7 +79,7 @@ exports.handle = function(req, res) {
 }
 
 
-
+/*
 function save_badge(data, res) {
   console.log('req_op save_badge input = ' + JSON.stringify(data));
   var badge = { name: data.name, desc: data.desc, pict:data.pict, gid: data.gid };
@@ -90,6 +92,7 @@ function save_badge(data, res) {
     return app_ajax.data(res, {bid : badge._id} );
   });
 };
+*/
 
 function save_user(data, res) {
   console.log(JSON.stringify(data));
@@ -130,7 +133,7 @@ function read_group_members(data, res) {
     return app_ajax.data(res, group.members);
   });
 };
-
+/*
 function read_group_badges(data, res) {
   console.log('req_op read_group_badges input = ' + JSON.stringify(data));
   var group = { gid: data.gid };
@@ -143,3 +146,4 @@ function read_group_badges(data, res) {
     return app_ajax.data(res, group.badges);
   });
 };
+*/

@@ -1,22 +1,24 @@
 var assert = require('assert');
 var model = require('./model');
 
-exports.createBadge = function(badge, cb) {
+exports.create = function(badge, cb) {
   model.db.collection('badges').insert(
     badge,
     function(err) {
+      model.db.close();
       if (err) return cb(err); 
-      var doc = { bid : badge._id, gid : badge.gid };
-      model.db.collection('group_badge_links').insert(
-        doc,
-        function(err) {
-          model.db.close();
-          if (err) return cb(err); 
-          cb();
-        }
-      ); 
+      cb();
     }
   );  
+};
+
+exports.getByIds = function(badge_ids, cb){
+  model.db.collection('badges').find({'_id' : {$in: badge_ids} }).toArray(function(err, badges){
+    model.db.close();
+    if (err) return cb(err);
+    console.log('model_badge getByIds badges array = '+ JSON.stringify(badges));  
+    cb(badges);
+  });
 };
 
 // return badges list earned by uid
@@ -53,20 +55,4 @@ exports.readBadgeMembers = function(badge, cb) {
     
   });    
 };
-
-/*
-exports.assignBadge = function(badge_user, cb) {
-  model.mongoClient.open(function(err, mongoClient) {
-    if (err) return cb(err);
-    var db = mongoClient.db(model.dbName);
-    db.collection('badge_user_links').insert(
-      badge_user,
-      function(err) {
-        mongoClient.close();
-        if (err) return cb(err); 
-      }
-    );  
-  });
-};
-*/
 

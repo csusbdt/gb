@@ -12,18 +12,20 @@ exports.handle = function (data, res) {
       return app_ajax.error(res);
     }
     console.log('group created with id = ' + group._id);
+    
+    var group_admin = { gid : group._id, uid : group.uid };
+    model_group_admin.create(group_admin, function(err) {
+      if (err) {
+        logger.error(__filename + ' : save_group model_group_admin : ' + err.message);
+        return app_ajax.error(res);
+      }
+      console.log('group_admin created with id = ' + group_admin._id);
+      
+    });
+
+    return app_ajax.data(res, {gid : group._id} );
   });
   
-  var group_admin = { gid : group._id, uid : group.uid };
-  model_group_admin.create(group_admin, function(err) {
-    if (err) {
-      logger.error(__filename + ' : save_group model_group_admin : ' + err.message);
-      return app_ajax.error(res);
-    }
-    console.log('group_admin created with id = ' + group_admin._id);
     
-  });
-
-  return app_ajax.data(res, {gid : group._id} );  
 };
 
