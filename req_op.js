@@ -79,21 +79,6 @@ exports.handle = function(req, res) {
 }
 
 
-/*
-function save_badge(data, res) {
-  console.log('req_op save_badge input = ' + JSON.stringify(data));
-  var badge = { name: data.name, desc: data.desc, pict:data.pict, gid: data.gid };
-  model_badge.createBadge(badge, function(err) {
-    if (err) {
-      logger.error(__filename + ' : save_badge : ' + err.message);
-      return app_ajax.error(res);
-    }
-    console.log('badge created with id = ' + badge._id);
-    return app_ajax.data(res, {bid : badge._id} );
-  });
-};
-*/
-
 function save_user(data, res) {
   console.log(JSON.stringify(data));
   var group = { name: data.name, desc: data.desc, uid: data.uid };
@@ -133,17 +118,3 @@ function read_group_members(data, res) {
     return app_ajax.data(res, group.members);
   });
 };
-/*
-function read_group_badges(data, res) {
-  console.log('req_op read_group_badges input = ' + JSON.stringify(data));
-  var group = { gid: data.gid };
-  model_group.readGroupBadges(group, function(data) {
-    if (data instanceof Error) {
-      logger.error(__filename + ' : read_group_badges : ' + data.message);
-      return app_ajax.error(res);
-    }
-    console.log('group_badges is read = ' + JSON.stringify(group.badges));
-    return app_ajax.data(res, group.badges);
-  });
-};
-*/
