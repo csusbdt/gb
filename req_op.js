@@ -3,6 +3,9 @@ var logger        = require('./logger');
 var app_ajax      = require('./app_ajax');
 var fb            = require('./fb');
 var model_group   = require('./model_group');
+var model_badge   = require('./model_badge');
+var model_user    = require('./model_user');
+
 
 var op_save_group           = require('./op_save_group');
 var op_save_badge           = require('./op_save_badge');
