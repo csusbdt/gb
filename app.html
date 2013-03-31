@@ -46,6 +46,7 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
 			        <li><a href="#" onclick="a.screen('badges')">My Badges</a></li>
+              <li><a href="#" onclick="">Find Group</a></li>
               <li><a href="issuer">Issue Badges</a></li>
               <li id="name"></li>
               <li id="login" style="display:none;"></li>
@@ -75,91 +76,25 @@
       <button onclick="a.screen('badges')" class="btn btn-primary">Badge</button>
     </div>
     
-    <!-- Badge Page -->
-    <div id="badges" class="container" style="display:none;">
-    <button class="btn btn-primary" type="button">Add New Badge</button>
-	     
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img class="pull-left .hidden-phone" src="//profile.ak.fbcdn.net/hprofile-ak-ash4/274294_699367401_6957527_s.jpg" alt="">
-            <h3>Badge title</h3>
-            <p>Badge Description</p>
-          </div>
-        </li>
-		  </ul>
-    </div>
-    
-    <!-- Groups Page -->
-    <div id="groups" class="container" style="display:none;">
-      <h2>Group List I manage:</h2>
-      <a href="#addGroupModal" role="button" class="btn" data-toggle="modal">Add New Group</a>
-      <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh</button>      
+    <!-- Find Groups Page -->
+    <div id="find_groups" class="container" style="display:none;">
+      <h2>Group List that you might like:</h2>
+      <a href="#searchGroupModal" role="button" class="btn" data-toggle="modal">Search group</a>
+      <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh(get next 10 group)</button>      
       <ul id="groups_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
     </div>
     
-    <!-- Group Badges Page -->
-    <div id="groupBadges" class="container" style="display:none;">
-      <div id="groupname"></div>
-      <p>Badge List </p>
-      <a href="#addBadgeModal" role="button" class="btn" data-toggle="modal"><i class="icon-plus-sign icon-white"></i>Add New Badge</a>
-      <button id="group_badges_refresh" class="btn btn-primary" onclick="" type="button"><i class="icon-bullhorn icon-white"></i> Invite People (not done, fb)</button>      
-      <button id="group_badges_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i> Refresh</button>
-      <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groups')" type="button">Back</button>      
-      
-      <ul id="group_badges_list" class="thumbnails">
+    <!-- Badge Page -->
+    <div id="mybadges" class="container" style="display:none;">
+    <button class="btn btn-primary" type="button">Refresh</button>
+      <ul id="my_badges_list" class="thumbnails">
         <!-- auto generated -->
-		  </ul>  
+		  </ul>
     </div>
     
-    <!-- Badge Members Page -->
-    <div id="badgeMembers" class="container" style="display:none;">
-      <div id="badgename"></div>
-      <p>Member List </p>
-      <a href="#addBadgeModal" role="button" class="btn" data-toggle="modal">Invite New Member</a>     
-      <button id="group_badges_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i> Refresh</button>
-      <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groupBadges')" type="button">Back to Badge</button>      
-      <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groups')" type="button">Back to Group</button>
-      <ul id="badge_members_list" class="thumbnails">
-        <!-- auto generated -->
-		  </ul>  
-    </div>
     
-    <!-- Add Group Modal-->
-    <div id="addGroupModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Add New Group</h3>
-      </div>
-      <div class="modal-body">
-        <p>Group Name        = <input type="text" id="gname"></p>
-        <p>Group Description = <input type="text" id="gdesc"></p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button id="saveGroup" data-dismiss="modal" onclick="a.c.saveNewGroup()" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-    
-    <!-- Add Badge Modal-->
-    <div id="addBadgeModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Add New Badge</h3>
-      </div>
-      <div class="modal-body">
-        <p>Badge Name        = <input type="text" id="bname"></p>
-        <p>Badge Description = <input type="text" id="bdesc"></p>
-        <p>Badge Picture = <input type="text" id="bpict"></p> 
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button id="saveBadge" data-dismiss="modal" onclick="a.c.saveNewBadge()" class="btn btn-primary">Save changes</button>
-      </div>
-    </div>
-  
     <!-- Login Modal-->
     <div id="loginModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-header">

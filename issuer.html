@@ -75,21 +75,6 @@
       <button onclick="a.screen('badges')" class="btn btn-primary">Badge</button>
     </div>
     
-    <!-- Badge Page -->
-    <div id="badges" class="container" style="display:none;">
-    <button class="btn btn-primary" type="button">Add New Badge</button>
-	     
-      <ul class="thumbnails">
-        <li class="span4">
-          <div class="thumbnail">
-            <img class="pull-left .hidden-phone" src="//profile.ak.fbcdn.net/hprofile-ak-ash4/274294_699367401_6957527_s.jpg" alt="">
-            <h3>Badge title</h3>
-            <p>Badge Description</p>
-          </div>
-        </li>
-		  </ul>
-    </div>
-    
     <!-- Groups Page -->
     <div id="groups" class="container" style="display:none;">
       <h2>Group List I manage:</h2>
@@ -136,6 +121,21 @@
       <div class="modal-body">
         <p>Group Name        = <input type="text" id="gname"></p>
         <p>Group Description = <input type="text" id="gdesc"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button id="saveGroup" data-dismiss="modal" onclick="a.c.saveNewGroup()" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+    
+    <!-- Inivite Member Modal-->
+    <div id="inviteMemberModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabel">Invite Friend to Group</h3>
+      </div>
+      <div class="modal-body">
+        
       </div>
       <div class="modal-footer">
         <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

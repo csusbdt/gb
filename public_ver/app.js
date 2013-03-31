@@ -169,7 +169,7 @@ $(function() {
 /*------------------ MODEL --------------------- */
 a.m.readGroups = function(cb) { 
   $.ajax({
-    url: '/op/read-admin-groups',
+    url: '/op/read-groups-by-admin',
     type: 'post',
     dataType: 'json',
     cache: false,
@@ -278,7 +278,7 @@ a.c.saveNewGroup = function() {
     }else{
       console.log('group is saved, id = ' + JSON.stringify(data.data));
       $('#addGroupModal').hide();
-      a.screen('groups');
+      //a.screen('groups');
       a.m.groups.push({'_id': data.data.gid, 'name': $('#gname').val(), 'desc': $('#gdesc').val() });
       a.rebuild();
     }

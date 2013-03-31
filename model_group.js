@@ -1,22 +1,24 @@
 var assert = require('assert');
 var model = require('./model');
 
-exports.createGroup = function(group, cb) {
+exports.create = function(group, cb) {
   model.db.collection('groups').insert(
     group,
     function(err) {
+      model.db.close();
       if (err) return cb(err); 
-      var doc = { gid : group._id, uid : group.uid };
-      model.db.collection('group_admin_links').insert(
-        doc,
-        function(err) {
-          model.db.close();
-          if (err) return cb(err); 
-          cb();
-        }
-      ); 
+      cb();
     }
   );  
+};
+
+exports.getByIds = function(group_ids, cb){
+  model.db.collection('groups').find({'_id' : {$in: group_ids} }).toArray(function(err, groups){
+    model.db.close();
+    if (err) return cb(err);
+    console.log('model_group getByIds groups array = '+ JSON.stringify(groups));  
+    cb(groups);
+  });
 };
 
 

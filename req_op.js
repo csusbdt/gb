@@ -1,10 +1,11 @@
 var url           = require('url');
 var logger        = require('./logger');
 var app_ajax      = require('./app_ajax');
-var model_user    = require('./model_user');
-var model_group   = require('./model_group');
-var model_badge   = require('./model_badge');
 var fb            = require('./fb');
+var model_group   = require('./model_group');
+
+var op_save_group = require('./op_save_group');
+var op_read_groups_by_admin = require('./op_read_groups_by_admin');
 
 exports.loginReplies   = 0;
 exports.saveGroup = 0;
@@ -30,6 +31,12 @@ exports.handle = function(req, res) {
       return app_ajax.error(res);
     }
     
+    // Check appVer
+    //if (data.appVer !== process.env.APP_VER){
+    //  logger.warning(__filename + ' : handle : appVer is invalid');
+    //  return app_ajax.error(res);
+    //}    
+    
     fb.getUid(data.accessToken, function(uid) {
       if (uid === undefined) { // user needs to login
         ++exports.loginReplies;
@@ -43,10 +50,10 @@ exports.handle = function(req, res) {
       var pathname = url.parse(req.url).pathname;
       if (pathname === '/op/save-group') {
         ++exports.saveGroup;
-        save_group(data, res);
-      }else if (pathname === '/op/read-admin-groups') {
+        op_save_group.handle(data, res);
+      }else if (pathname === '/op/read-groups-by-admin') {
         ++exports.readAdminGroup;
-        read_admin_groups(data, res);
+        op_read_groups_by_admin.handle(data, res);
       }else if (pathname === '/op/read-group-badges') {
         //++exports.readAdminGroup;
         read_group_badges(data, res);
@@ -69,18 +76,7 @@ exports.handle = function(req, res) {
   });
 }
 
-function save_group(data, res) {
-  console.log('req_op save_group input = ' + JSON.stringify(data));
-  var group = { name: data.name, desc: data.desc, uid: data.uid };
-  model_group.createGroup(group, function(err) {
-    if (err) {
-      logger.error(__filename + ' : save_group : ' + err.message);
-      return app_ajax.error(res);
-    }
-    console.log('group created with id = ' + group._id);
-    return app_ajax.data(res, {gid : group._id} );
-  });
-};
+
 
 function save_badge(data, res) {
   console.log('req_op save_badge input = ' + JSON.stringify(data));
@@ -108,18 +104,6 @@ function save_user(data, res) {
   });
 };
 
-function read_admin_groups(data, res) {
-  console.log('req_op read_admin_groups input = ' + JSON.stringify(data));
-  var user = { uid: data.uid };
-  model_group.readAdminGroups(user, function(data) {
-    if (data instanceof Error) {
-      logger.error(__filename + ' : read_admin_groups : ' + data.message);
-      return app_ajax.error(res);
-    }
-    console.log('admin_groups is read = ' + JSON.stringify(user.groups));
-    return app_ajax.data(res, user.groups);
-  });
-};
 
 function read_badge_members(data, res) {
   console.log('req_op read_badge_members input = ' + JSON.stringify(data));
