@@ -53,6 +53,17 @@ $(function() {
   screens.findGroups.rebuild = function(){
     $('#groups_list > li').remove();
     a.m.anyGroups.forEach(function(group, i){
+      var $li = $('<li class="span4"></li>');
+      var $div = $('<div class="thumbnail"></div>');
+      $div.append('<h3>'+ group.name +'</h3>');
+      $div.append('<p>'+ group.desc +'</p>');
+      var $btn = $('<button class="btn btn-primary" type="button"></button>');
+      $btn.append('<i class="icon-certificate icon-white"></i> Join');
+      //$btn.attr('id', 'something');
+      $btn.click(function(){
+        alert('hi');
+      });
+
         $('#groups_list').append(
           '<li class="span4">' +
             '<div class="thumbnail">' +
