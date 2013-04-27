@@ -46,7 +46,7 @@
           <div class="nav-collapse collapse">
             <ul class="nav">
 			        <li><a href="#" onclick="a.screen('badges')">My Badges</a></li>
-              <li><a href="#" onclick="">Find Group</a></li>
+              <li><a href="#" onclick="a.screen('findGroups')">Find Group</a></li>
               <li><a href="issuer">Issue Badges</a></li>
               <li id="name"></li>
               <li id="login" style="display:none;"></li>
@@ -77,7 +77,7 @@
     </div>
     
     <!-- Find Groups Page -->
-    <div id="find_groups" class="container" style="display:none;">
+    <div id="findGroups" class="container" style="display:none;">
       <h2>Group List that you might like:</h2>
       <a href="#searchGroupModal" role="button" class="btn" data-toggle="modal">Search group</a>
       <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh(get next 10 group)</button>      

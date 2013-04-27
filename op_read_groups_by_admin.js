@@ -1,6 +1,7 @@
 var model_group       = require('./model_group');
 var model_group_admin = require('./model_group_admin');
 var app_ajax          = require('./app_ajax');
+var logger            = require('./logger');
 
 exports.handle = function (data, res) {
   console.log('op_read_groups_by_admin  input = ' + JSON.stringify(data));

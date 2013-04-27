@@ -1,6 +1,7 @@
 var model_badge       = require('./model_badge');
 var model_group_badge = require('./model_group_badge');
 var app_ajax          = require('./app_ajax');
+var logger            = require('./logger');
 
 exports.handle = function (data, res) {
   console.log('op_read_badges_by_group  input = ' + JSON.stringify(data));

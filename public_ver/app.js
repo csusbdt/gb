@@ -20,14 +20,16 @@ $(function() {
       });
     };    
     
-    screens.loading = new Screen('loading');
-    screens.groups  = new Screen('groups');
-    screens.title   = new Screen('title');
-    screens.badges  = new Screen('badges');
-    screens.profile = new Screen('profile'); 
-    screens.login = new Screen('login');
+    screens.loading     = new Screen('loading');
+    screens.groups      = new Screen('groups');
+    screens.title       = new Screen('title');
+    screens.badges      = new Screen('badges');
+    screens.myBadges    = new Screen('myBadges');
+    screens.profile     = new Screen('profile'); 
+    screens.login       = new Screen('login');
     screens.groupBadges = new Screen('groupBadges');
-    screens.badgeMembers = new Screen('badgeMembers');
+    screens.badgeMembers= new Screen('badgeMembers');
+    screens.findGroups  = new Screen('findGroups');
   }());
   
   var currentScreen = screens.loading;
@@ -46,6 +48,42 @@ $(function() {
 
   a.rebuild = function(){
     currentScreen.rebuild();
+  };
+  
+  screens.findGroups.rebuild = function(){
+    $('#groups_list > li').remove();
+    a.m.anyGroups.forEach(function(group, i){
+        $('#groups_list').append(
+          '<li class="span4">' +
+            '<div class="thumbnail">' +
+              '<h3>'+ group.name +'</h3>' +
+              '<p>'+ group.desc +'</p>' +
+              '<button id="group_edit" class="btn btn-primary" onclick="screens.findGroups.joinGroupBtn('+i+')" type="button">' +
+                '<i class="icon-certificate icon-white"></i> Join</button>' +
+            '</div>' +
+          '</li>'
+        );  
+    });
+  };
+  
+  //screens.findGroups.joinGroupBtn = funtion(i){
+  //  a.m.joinGroup(a.m.anyGroups[i]._id, function(){
+  //    if (err) 
+  //      alert('Err' + err.message);
+  //    else
+  //      a.screens('badges');
+  //  });
+  //};
+  
+  screens.findGroups.refresh = function(){   
+    a.m.readAnyGroups(function() {
+      screens.findGroups.rebuild();
+    });
+  };
+  
+  screens.findGroups.init = function(){
+    console.log('findGroups init');
+    if (a.m.anyGroups === undefined) screens.findGroups.refresh();
   };
   
   screens.title.init = function(){
@@ -117,12 +155,18 @@ $(function() {
               '<h3>'+ badge.name +'</h3>' +
               '<p>'+ badge.desc +'</p>' +
               '<p>'+ badge.pict +'</p>' +
-              '<button id="assign_badge" class="btn btn-primary" onclick="a.v.setCurrBadge('+i+')" type="button">' +
+              '<button id="assign_badge" class="btn btn-primary" onclick="screens.groupBadges.selectBadgeBtn('+i+')" type="button">' +
                 '<i class="icon-user icon-white"></i> Assign Badge</button>' + 
             '</div>' +
           '</li>'
         );  
     });
+  };
+  
+  screens.groupBadges.selectBadgeBtn = function(i) {
+    a.v.currBadge = a.v.currGroup.badges[i];
+    screens.groupBadges.rebuild();
+    a.screen('badgeMembers');
   };
   
   screens.groups.rebuild = function(){
@@ -133,7 +177,7 @@ $(function() {
             '<div class="thumbnail">' +
               '<h3>'+ group.name +'</h3>' +
               '<p>'+ group.desc +'</p>' +
-              '<button id="group_edit" class="btn btn-primary" onclick="a.v.setCurrGroup('+i+')" type="button">' +
+              '<button id="group_edit" class="btn btn-primary" onclick="a.v.selectGroupBtn('+i+')" type="button">' +
                 '<i class="icon-certificate icon-white"></i> Badges</button>' +
             '</div>' +
           '</li>'
@@ -141,28 +185,16 @@ $(function() {
     });
   };
   
+  screens.groups.selectGroupBtn = function(i) {
+    a.v.currGroup = a.m.groups[i];
+    screens.groupBadges.rebuild();
+    a.screen('groupBadges');
+  };
+  
   screens.groups.init = function(){
     if (a.m.groups === undefined) screens.groups.refresh();
   };
-  
-  /* ------SCREEN Utilities-------- 
-  a.Screen.createBtn = function(btnTxt){
-    return $('<button>' + btnTxt + '</button>');
-  };
-  
-  a.Screen.createDiv = function(text){
-    if (text === undefined) text = '';
-    return $('<div>' + text + '</div>');
-  };
-  
-  a.Screen.createTxtBox = function(){
-    return $('<input></input>');
-  };
-  
-  a.Screen.createList = function(){
-    return $('<ul></ul>');
-  };
-  ------------------------------------------------------------- */
+ 
 });
 /*-----   END OF SCREENS ------------------ */
 
@@ -187,6 +219,62 @@ a.m.readGroups = function(cb) {
       console.log('group is read');
       a.m.groups = data.data;
       a.m.groups.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
+a.m.readAnyGroups = function(cb) { 
+  $.ajax({
+    url: '/op/read-any-groups',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken } )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('group is read');
+      a.m.anyGroups = data.data;
+      a.m.anyGroups.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
+a.m.joinGroup = function(gid, cb) { 
+  $.ajax({
+    url: '/op/join-group',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid': gid } )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('group_member linked');
       cb();
     }
   })
@@ -324,18 +412,15 @@ a.c.saveNewBadge = function() {
 
 /*------------------ VIEW ----------------- */
 a.v.currGroup = null;
-a.v.setCurrGroup = function(i) {
-  $('#group_badges_list > li').remove();
+
+a.v.selectGroupBtn = function(i) {
   a.v.currGroup = a.m.groups[i];
+  //screens.groupBadges.rebuild();
   a.screen('groupBadges');
 };
 
 a.v.currBadge = null;
-a.v.setCurrBadge = function(i) {
-  $('#group_members_list > li').remove();
-  a.v.currBadge = a.v.currGroup.badges[i];
-  a.screen('badgeMembers');
-};
+
 /* ----------------- END OF VIEW ------------- */
 
 

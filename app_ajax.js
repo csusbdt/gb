@@ -1,6 +1,6 @@
 var querystring = require('querystring');
 
-var MAX_BODY = 256;
+var MAX_BODY = 512;
 
 // Extract a data object from the request message.
 // cb = function(data) where data is Error or Object

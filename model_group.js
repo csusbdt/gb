@@ -21,6 +21,14 @@ exports.getByIds = function(group_ids, cb){
   });
 };
 
+exports.getAll = function(cb){
+  model.db.collection('groups').find().toArray(function(err, groups){
+    model.db.close();
+    if (err) return cb(err);
+    console.log('model_group getByIds groups array = '+ JSON.stringify(groups));  
+    cb(groups);
+  });
+};
 
 exports.readGroupMembers = function(group, cb) {
   model.db.collection('group_member_links',{'uid' : true}).find(group).toArray(function(err, group_member_links){

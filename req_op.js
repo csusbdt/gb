@@ -11,6 +11,8 @@ var op_save_group           = require('./op_save_group');
 var op_save_badge           = require('./op_save_badge');
 var op_read_groups_by_admin = require('./op_read_groups_by_admin');
 var op_read_badges_by_group = require('./op_read_badges_by_group');
+var op_read_any_groups      = require('./op_read_any_groups');
+var op_join_group           = require('./op_join_group');
 
 exports.loginReplies   = 0;
 exports.saveGroup = 0;
@@ -35,7 +37,6 @@ exports.handle = function(req, res) {
       logger.warning(__filename + ' : handle : facebook access token missing from ajax request');
       return app_ajax.error(res);
     }
-    
     // Check appVer
     //if (data.appVer !== process.env.APP_VER){
     //  logger.warning(__filename + ' : handle : appVer is invalid');
@@ -59,8 +60,15 @@ exports.handle = function(req, res) {
       }else if (pathname === '/op/read-groups-by-admin') {
         ++exports.readAdminGroup;
         op_read_groups_by_admin.handle(data, res);
+      }else if (pathname === '/op/read-any-groups') {
+        //++exports.readAdminGroup;
+        op_read_any_groups.handle(data, res);
+      }else if (pathname === '/op/join-group') {
+        //++exports.readAdminGroup;
+        op_join_group.handle(data, res); 
       }else if (pathname === '/op/read-badges-by-group') {
         //++exports.readAdminGroup;
+        console.log("here");
         op_read_badges_by_group.handle(data, res);
       }else if (pathname === '/op/read-badge-members') {
         //++exports.readAdminGroup;
