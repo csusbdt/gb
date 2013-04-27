@@ -66,14 +66,14 @@ $(function() {
     });
   };
   
-  //screens.findGroups.joinGroupBtn = funtion(i){
-  //  a.m.joinGroup(a.m.anyGroups[i]._id, function(){
-  //    if (err) 
-  //      alert('Err' + err.message);
-  //    else
-  //      a.screens('badges');
-  //  });
-  //};
+  screens.findGroups.joinGroupBtn = funtion(i){
+    a.m.joinGroup(a.m.anyGroups[i]._id, function(){
+      if (err) 
+        alert('Err' + err.message);
+      else
+        a.screens('badges');
+    });
+  };
   
   screens.findGroups.refresh = function(){   
     a.m.readAnyGroups(function() {
