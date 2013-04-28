@@ -1,6 +1,7 @@
 var model_group       = require('./model_group');
 var model_group_member= require('./model_group_member');
 var app_ajax          = require('./app_ajax');
+var logger            = require('./logger');
 
 exports.handle = function (data, res) {
   console.log('op_read_any_groups  input = ' + JSON.stringify(data));
@@ -11,6 +12,9 @@ exports.handle = function (data, res) {
     }
     console.log('groups is read = ' + JSON.stringify(groups));
     return app_ajax.data(res, groups);
-  });  
+  });
+  
+  
+    
 };
 

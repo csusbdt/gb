@@ -13,6 +13,8 @@ var op_read_groups_by_admin = require('./op_read_groups_by_admin');
 var op_read_badges_by_group = require('./op_read_badges_by_group');
 var op_read_any_groups      = require('./op_read_any_groups');
 var op_join_group           = require('./op_join_group');
+var op_read_my_badges       = require('./op_read_my_badges');
+var op_read_badge_members   = require('./op_read_badge_members');
 
 exports.loginReplies   = 0;
 exports.saveGroup = 0;
@@ -79,6 +81,9 @@ exports.handle = function(req, res) {
       }else if (pathname === '/op/save-badge') {
         //++exports.readAdminGroup;
         op_save_badge.handle(data, res);        
+      }else if (pathname === '/op/read-my-badges') {
+        //++exports.readAdminGroup;
+        op_read_my_badges.handle(data, res);        
       }else if (pathname === '/op/save-user') { 
         ++exports.saveUser;
         save_user(data, res);

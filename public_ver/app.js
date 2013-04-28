@@ -50,6 +50,40 @@ $(function() {
     currentScreen.rebuild();
   };
   
+  screens.myBadges.init = function(){
+    console.log('myBadges init');
+    if (a.m.myBadges === undefined) screens.myBadges.refresh();
+  };
+  
+  screens.myBadges.refresh = function(){
+    a.m.readMyBadges(function() {
+      screens.myBadges.rebuild();
+    });
+  };
+  
+  screens.myBadges.rebuild = function(){
+    $('#my_badges_list > li').remove();
+    a.m.myBadges.forEach(function(badge, i){
+      var $li = $('<li class="span4"></li>');
+      var $div = $('<div class="thumbnail"></div>');
+      $div.append('<h3>'+ badge.name +'</h3>');
+      $div.append('<p>'+ badge.desc +'</p>');
+      var $btn = $('<button class="btn btn-primary" type="button"></button>');
+      $btn.append('<i class="icon-certificate icon-white"></i> Share FB');
+      //$btn.attr('id', 'something');
+      $btn.click(function(){
+        screens.myBadges.shareFBBtn(i);
+      });
+      $div.append($btn);
+      $li.append($div);
+      $('#my_badges_list').append($li);    
+    });
+  };
+  
+  screens.myBadges.shareFBBtn = function(i){
+    alert('Share FB this badge ' + a.m.myBadge[i].name);  
+  };
+  
   screens.findGroups.rebuild = function(){
     $('#groups_list > li').remove();
     a.m.anyGroups.forEach(function(group, i){
@@ -61,28 +95,17 @@ $(function() {
       $btn.append('<i class="icon-certificate icon-white"></i> Join');
       //$btn.attr('id', 'something');
       $btn.click(function(){
-        alert('hi');
+        screens.findGroups.joinGroupBtn(i);
       });
-
-        $('#groups_list').append(
-          '<li class="span4">' +
-            '<div class="thumbnail">' +
-              '<h3>'+ group.name +'</h3>' +
-              '<p>'+ group.desc +'</p>' +
-              '<button id="group_edit" class="btn btn-primary" onclick="screens.findGroups.joinGroupBtn('+i+')" type="button">' +
-                '<i class="icon-certificate icon-white"></i> Join</button>' +
-            '</div>' +
-          '</li>'
-        );  
+      $div.append($btn);
+      $li.append($div);
+      $('#groups_list').append($li);    
     });
   };
   
-  screens.findGroups.joinGroupBtn = funtion(i){
+  screens.findGroups.joinGroupBtn = function(i){
     a.m.joinGroup(a.m.anyGroups[i]._id, function(){
-      if (err) 
-        alert('Err' + err.message);
-      else
-        a.screens('badges');
+        a.screen('myBadges');
     });
   };
   
@@ -141,36 +164,60 @@ $(function() {
   
   screens.badgeMembers.rebuild = function(){
     $('#badge_members_list > li').remove();
+    var qs = 'SELECT+uid,+name,+pic_square+FROM+user+WHERE+uid=699367401+OR+uid=1076781871+OR';
     a.v.currBadge.members.forEach(function(member, i){
-        $('#badge_members_list').append(
-          '<li class="span4">' +
-            '<div class="thumbnail">' +
-              '<h3>'+ member.name +'</h3>' +
-              '<p>'+ member.uid +'</p>' +
-              '<p>Status earned</p>' +
-              '<p>photo, # badge earned</p>' +
-              '<button id="group_edit" class="btn btn-primary" onclick="" type="button">' +
-                '<i class="icon-certificate icon-white"></i> Assign (not done)</button>' +
-            '</div>' +
-          '</li>'
-        );  
+      qs+= '+uid='+member.uid+'+OR';
     });
-  };
+    qs = qs.substring(0, qs.length - 3); // to remove the last +OR   
+      
+    $.ajax({
+    url: 'https://graph.facebook.com/fql?q=' + qs + '&access_token=' + a.creds.accessToken,
+    type: "GET",
+    dataType: 'json'
+    })
+    .done(function(data) {
+      if (data.data === undefined) {
+        alert('fail');
+        return;
+      }
+      data.data.forEach(function(member) {
+        var $li = $('<li class="span4"></li>');
+        var $div = $('<div class="thumbnail"></div>');
+        $div.append('<h3>'+ member.name +'</h3>');
+        $div.append('<p>'+ member.pic_square +'</p>');
+        var $btn = $('<button class="btn btn-primary" type="button"></button>');
+        $btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
+        //$btn.attr('id', 'something');
+        $btn.click(function(){
+          //screens.badgeMembers.assignBadgeBtn(member.uid);
+        });
+        $div.append($btn);
+        $li.append($div);
+        $('#badge_members_list').append($li);      
+      });
+    })
+    .fail(function(jqXHR, textStatus) {
+    console.log('textStatus: ' + textStatus);
+    console.log(jqXHR);
+    });
+  };    
   
   screens.groupBadges.rebuild = function(){
-    $('#group_badges_list > li').remove();
+    $('#group__badges_list > li').remove();
     a.v.currGroup.badges.forEach(function(badge, i){
-        $('#group_badges_list').append(
-          '<li class="span4">' +
-            '<div class="thumbnail">' +
-              '<h3>'+ badge.name +'</h3>' +
-              '<p>'+ badge.desc +'</p>' +
-              '<p>'+ badge.pict +'</p>' +
-              '<button id="assign_badge" class="btn btn-primary" onclick="screens.groupBadges.selectBadgeBtn('+i+')" type="button">' +
-                '<i class="icon-user icon-white"></i> Assign Badge</button>' + 
-            '</div>' +
-          '</li>'
-        );  
+      var $li = $('<li class="span4"></li>');
+      var $div = $('<div class="thumbnail"></div>');
+      $div.append('<h3>'+ badge.name +'</h3>');
+      $div.append('<p>'+ badge.desc +'</p>');
+      var $btn = $('<button class="btn btn-primary" type="button"></button>');
+      $btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
+      //$btn.attr('id', 'something');
+      $btn.click(function(){
+        screens.groupBadges.selectBadgeBtn(i);
+      });
+      $div.append($btn);
+      $li.append($div);
+      $('#group_badges_list').append($li);    
     });
   };
   
@@ -210,6 +257,35 @@ $(function() {
 /*-----   END OF SCREENS ------------------ */
 
 /*------------------ MODEL --------------------- */
+a.m.readMyBadges = function(cb) { 
+  $.ajax({
+    url: '/op/read-my-badges',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken } )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('badges are read');
+      a.m.myBadges = data.data;
+      a.m.myBadges.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
 a.m.readGroups = function(cb) { 
   $.ajax({
     url: '/op/read-groups-by-admin',
@@ -343,7 +419,7 @@ a.m.readBadgeMembers = function(cb) {
     } else {
       console.log('members are read');
       a.v.currBadge.members = data.data;
-      a.v.currBadge.members.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      //a.v.currBadge.members.sort(function(a,b) { return a.name < b.name ? -1 : 1});
       cb();
     }
   })
