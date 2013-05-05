@@ -45,7 +45,7 @@
           <a class="brand" onclick="a.screen('title')">GradeBadge</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-			        <li><a href="#" onclick="a.screen('badges')">My Badges</a></li>
+			        <li><a href="#" onclick="a.screen('myBadges')">My Badges</a></li>
               <li><a href="#" onclick="a.screen('findGroups')">Find Group</a></li>
               <li><a href="issuer">Issue Badges</a></li>
               <li id="name"></li>
@@ -73,7 +73,7 @@
     <div id="title" class="container" style="display:none;">
       Welcome, this title page.
       <button onclick="a.screen('groups')" class="btn btn-primary">Group</button>
-      <button onclick="a.screen('badges')" class="btn btn-primary">Badge</button>
+      <button onclick="a.screen('myBadges')" class="btn btn-primary">Badge</button>
     </div>
     
     <!-- Find Groups Page -->
@@ -81,13 +81,13 @@
       <h2>Group List that you might like:</h2>
       <a href="#searchGroupModal" role="button" class="btn" data-toggle="modal">Search group</a>
       <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh(get next 10 group)</button>      
-      <ul id="groups_list" class="thumbnails">
+      <ul id="findgroups_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
     </div>
     
-    <!-- Badge Page -->
-    <div id="mybadges" class="container" style="display:none;">
+    <!-- My Badge Page -->
+    <div id="myBadges" class="container" style="display:none;">
     <button class="btn btn-primary" type="button">Refresh</button>
       <ul id="my_badges_list" class="thumbnails">
         <!-- auto generated -->

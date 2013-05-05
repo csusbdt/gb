@@ -23,11 +23,12 @@ $(function() {
     screens.loading     = new Screen('loading');
     screens.groups      = new Screen('groups');
     screens.title       = new Screen('title');
-    screens.badges      = new Screen('badges');
+    //screens.badges      = new Screen('badges');
     screens.myBadges    = new Screen('myBadges');
     screens.profile     = new Screen('profile'); 
     screens.login       = new Screen('login');
     screens.groupBadges = new Screen('groupBadges');
+    screens.groupMembers= new Screen('groupMembers');
     screens.badgeMembers= new Screen('badgeMembers');
     screens.findGroups  = new Screen('findGroups');
   }());
@@ -85,7 +86,7 @@ $(function() {
   };
   
   screens.findGroups.rebuild = function(){
-    $('#groups_list > li').remove();
+    $('#findgroups_list > li').remove();
     a.m.anyGroups.forEach(function(group, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
@@ -99,7 +100,7 @@ $(function() {
       });
       $div.append($btn);
       $li.append($div);
-      $('#groups_list').append($li);    
+      $('#findgroups_list').append($li);    
     });
   };
   
@@ -134,13 +135,25 @@ $(function() {
   
   screens.groupBadges.init = function(){
     console.log('Curr Group = ' +JSON.stringify(a.v.currGroup));
-    $('#groupname').html('<h2>'+ a.v.currGroup.name +'</h2>');
+    $('#groupname_b').html('<h2>'+ a.v.currGroup.name +'</h2>');
     if (a.v.currGroup.badges === undefined) screens.groupBadges.refresh();
   };
   
   screens.groupBadges.refresh = function(){   
     a.m.readGroupBadges(function() {
       screens.groupBadges.rebuild();
+    });
+  };
+  
+  screens.groupMembers.init = function(){
+    console.log('Curr Group = ' +JSON.stringify(a.v.currGroup));
+    $('#groupname_m').html('<h2>'+ a.v.currGroup.name +'</h2>');
+    if (a.v.currGroup.members === undefined) screens.groupMembers.refresh();
+  };
+  
+  screens.groupMembers.refresh = function(){   
+    a.m.readGroupMembers(function() {
+      screens.groupMembers.rebuild();
     });
   };
   
@@ -164,7 +177,7 @@ $(function() {
   
   screens.badgeMembers.rebuild = function(){
     $('#badge_members_list > li').remove();
-    var qs = 'SELECT+uid,+name,+pic_square+FROM+user+WHERE+uid=699367401+OR+uid=1076781871+OR';
+    var qs = 'SELECT+uid,+name,+pic_square+FROM+user+WHERE';
     a.v.currBadge.members.forEach(function(member, i){
       qs+= '+uid='+member.uid+'+OR';
     });
@@ -183,13 +196,12 @@ $(function() {
       data.data.forEach(function(member) {
         var $li = $('<li class="span4"></li>');
         var $div = $('<div class="thumbnail"></div>');
-        $div.append('<h3>'+ member.name +'</h3>');
-        $div.append('<p>'+ member.pic_square +'</p>');
+        $div.append('<h3>'+ member.name +' <img src="'+ member.pic_square +'"/></h3>');
         var $btn = $('<button class="btn btn-primary" type="button"></button>');
         $btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
         //$btn.attr('id', 'something');
         $btn.click(function(){
-          //screens.badgeMembers.assignBadgeBtn(member.uid);
+          screens.badgeMembers.assignBadgeBtn(member.uid, a.v.currBadge._id);
         });
         $div.append($btn);
         $li.append($div);
@@ -202,8 +214,53 @@ $(function() {
     });
   };    
   
+  screens.badgeMembers.assignBadgeBtn = function(uid, bid){
+    a.m.assignBadge(uid, bid, function(){
+      //do something
+    });  
+  };
+  
+  screens.groupMembers.rebuild = function(){
+    $('#group_members_list > li').remove();
+    var qs = 'SELECT+uid,+name,+pic_square+FROM+user+WHERE';
+    a.v.currGroup.members.forEach(function(member, i){
+      qs+= '+uid='+member.uid+'+OR';
+    });
+    qs = qs.substring(0, qs.length - 3); // to remove the last +OR   
+      
+    $.ajax({
+    url: 'https://graph.facebook.com/fql?q=' + qs + '&access_token=' + a.creds.accessToken,
+    type: "GET",
+    dataType: 'json'
+    })
+    .done(function(data) {
+      if (data.data === undefined) {
+        alert('fail');
+        return;
+      }
+      data.data.forEach(function(member) {
+        var $li = $('<li class="span4"></li>');
+        var $div = $('<div class="thumbnail"></div>');
+        $div.append('<h3>'+ member.name +' <img src="'+ member.pic_square +'"/></h3>');
+        var $btn = $('<button class="btn btn-primary" type="button"></button>');
+        //$btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
+        //$btn.attr('id', 'something');
+        //$btn.click(function(){
+          //screens.badgeMembers.assignBadgeBtn(member.uid);
+        //});
+        $div.append($btn);
+        $li.append($div);
+        $('#group_members_list').append($li);      
+      });
+    })
+    .fail(function(jqXHR, textStatus) {
+    console.log('textStatus: ' + textStatus);
+    console.log(jqXHR);
+    });
+  };
+  
   screens.groupBadges.rebuild = function(){
-    $('#group__badges_list > li').remove();
+    $('#group_badges_list > li').remove();
     a.v.currGroup.badges.forEach(function(badge, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
@@ -235,8 +292,10 @@ $(function() {
             '<div class="thumbnail">' +
               '<h3>'+ group.name +'</h3>' +
               '<p>'+ group.desc +'</p>' +
-              '<button id="group_edit" class="btn btn-primary" onclick="a.v.selectGroupBtn('+i+')" type="button">' +
+              '<button id="group_edit" class="btn btn-primary" onclick="a.v.selectGroupBtn('+i+', true)" type="button">' +
                 '<i class="icon-certificate icon-white"></i> Badges</button>' +
+              '<button id="group_member" class="btn btn-primary" onclick="a.v.selectGroupBtn('+i+', false)" type="button">' +
+                '<i class="icon-certificate icon-white"></i> Members</button>' +  
             '</div>' +
           '</li>'
         );  
@@ -245,7 +304,7 @@ $(function() {
   
   screens.groups.selectGroupBtn = function(i) {
     a.v.currGroup = a.m.groups[i];
-    screens.groupBadges.rebuild();
+    //screens.groupBadges.rebuild();
     a.screen('groupBadges');
   };
   
@@ -350,7 +409,7 @@ a.m.joinGroup = function(gid, cb) {
     type: 'post',
     dataType: 'json',
     cache: false,
-    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid': gid } )
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, data:{ 'gid': gid } } )
   })
   .done(function(data) {
     console.log('app.js data = '+ JSON.stringify(data));
@@ -371,13 +430,41 @@ a.m.joinGroup = function(gid, cb) {
   });
 }; 
 
+a.m.assignBadge = function(uid, bid, cb) { 
+  $.ajax({
+    url: '/op/assign-badge',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, data: {'uid': uid, 'bid': bid }} )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('badge assigned linked');
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
+
 a.m.readGroupBadges = function(cb) { 
   $.ajax({
     url: '/op/read-badges-by-group',
     type: 'post',
     dataType: 'json',
     cache: false,
-    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid' : a.v.currGroup._id } )
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, data: { 'gid' : a.v.currGroup._id }} )
   })
   .done(function(data) {
     console.log('app.js data = '+ JSON.stringify(data));
@@ -400,13 +487,42 @@ a.m.readGroupBadges = function(cb) {
   });
 }; 
 
+a.m.readGroupMembers = function(cb) { 
+  $.ajax({
+    url: '/op/read-members-by-group',
+    type: 'post',
+    dataType: 'json',
+    cache: false,
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, data: {'gid' : a.v.currGroup._id }} )
+  })
+  .done(function(data) {
+    console.log('app.js data = '+ JSON.stringify(data));
+    //if (data.login !== undefined) {
+      //a.relogin(function() { $saveBtn.click(); });
+    //} else 
+    if (data.error !== undefined) {
+      console.log('error = ' + data.error);
+      cb(data.error);
+    } else {
+      console.log('badges are read');
+      a.v.currGroup.members = data.data;
+      //a.v.currGroup.members.sort(function(a,b) { return a.name < b.name ? -1 : 1});
+      cb();
+    }
+  })
+  .fail(function(jqxhr, textStatus, errorThrown) {
+    if (errorThrown) console.log('Error: ' + errorThrown);
+    else console.log('Error: ' + textStatus);
+  });
+}; 
+
 a.m.readBadgeMembers = function(cb) { 
   $.ajax({
     url: '/op/read-badge-members',
     type: 'post',
     dataType: 'json',
     cache: false,
-    data: JSON.stringify( { 'accessToken': a.creds.accessToken, 'gid' : a.v.currGroup._id, 'bid' : a.v.currBadge._id } )
+    data: JSON.stringify( { 'accessToken': a.creds.accessToken, data: { 'gid' : a.v.currGroup._id, 'bid' : a.v.currBadge._id }} )
   })
   .done(function(data) {
     console.log('app.js data = '+ JSON.stringify(data));
@@ -439,7 +555,7 @@ a.c.saveNewGroup = function() {
     type: 'post',
     dataType: 'json',
     cache: false,
-    data: JSON.stringify( { 'name': $('#gname').val(), 'desc': $('#gdesc').val(), 'accessToken': a.creds.accessToken } )
+    data: JSON.stringify( {'accessToken': a.creds.accessToken, data: { 'name': $('#gname').val(), 'desc': $('#gdesc').val() }} )
   })
   .done(function(data) {
     console.log(JSON.stringify(data));
@@ -470,7 +586,7 @@ a.c.saveNewBadge = function() {
     type: 'post',
     dataType: 'json',
     cache: false,
-    data: JSON.stringify( { 'name': $('#bname').val(), 'desc': $('#bdesc').val(), 'pict': $('#bpict').val(), 'gid': a.v.currGroup._id, 'accessToken': a.creds.accessToken } )
+    data: JSON.stringify( {'accessToken': a.creds.accessToken, data: { 'name': $('#bname').val(), 'desc': $('#bdesc').val(), 'pict': $('#bpict').val(), 'gid': a.v.currGroup._id }} )
   })
   .done(function(data) {
     console.log(JSON.stringify(data));
@@ -500,10 +616,13 @@ a.c.saveNewBadge = function() {
 /*------------------ VIEW ----------------- */
 a.v.currGroup = null;
 
-a.v.selectGroupBtn = function(i) {
+a.v.selectGroupBtn = function(i, option) {
   a.v.currGroup = a.m.groups[i];
   //screens.groupBadges.rebuild();
-  a.screen('groupBadges');
+  if (option)
+    a.screen('groupBadges');
+  else
+    a.screen('groupMembers');
 };
 
 a.v.currBadge = null;

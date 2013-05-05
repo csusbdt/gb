@@ -3,7 +3,7 @@ var model_group_badge = require('./model_group_badge');
 var app_ajax          = require('./app_ajax');
 var logger            = require('./logger');
 
-exports.handle = function (data, res) {
+exports.handle = function (uid, data, res) {
   //console.log('op_save_badge input = ' + JSON.stringify(data));
   var badge = { name: data.name, desc: data.desc, pict:data.pict, gid: data.gid };
   model_badge.create(badge, function(err) {

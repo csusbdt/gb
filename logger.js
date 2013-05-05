@@ -25,7 +25,7 @@ exports.warning = function(msg, opt_msg) {
   ++exports.warningsReceived;
 };
 
-exports.errors = function(msg, opt_msg) {
+exports.error = function(msg, opt_msg) {
   if (errorsPrinted < process.env.LOGGER_MAX_ERRORS) {
     ++errorsPrinted;
     print('ERROR', msg, opt_msg);

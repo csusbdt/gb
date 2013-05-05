@@ -3,9 +3,9 @@ var model_group_admin = require('./model_group_admin');
 var app_ajax      = require('./app_ajax');
 var logger = require('./logger');
 
-exports.handle = function (data, res) {
+exports.handle = function (uid, data, res) {
   //console.log('op_save_group input = ' + JSON.stringify(data));
-  var group = { name: data.name, desc: data.desc, uid: data.uid };
+  var group = { name: data.name, desc: data.desc, uid: uid };
   model_group.create(group, function(err) {
     if (err) {
       logger.error(__filename + ' : save_group model_group : ' + err.message);

@@ -3,9 +3,9 @@ var model_group_admin = require('./model_group_admin');
 var app_ajax          = require('./app_ajax');
 var logger            = require('./logger');
 
-exports.handle = function (data, res) {
+exports.handle = function (uid, data, res) {
   console.log('op_read_groups_by_admin  input = ' + JSON.stringify(data));
-  var admin = { uid: data.uid };
+  var admin = { uid: uid };
   model_group_admin.getGroupIdsByAdminId(admin, function(gids) {
     if (gids instanceof Error) {
       logger.error(__filename + ' : model_group_admin.getGroupIdsByAdminId : ' + gids.message);

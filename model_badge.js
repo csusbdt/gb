@@ -13,6 +13,7 @@ exports.create = function(badge, cb) {
 };
 
 exports.getByIds = function(badge_ids, cb){
+  console.log('model badge, badge ids =' +JSON.stringify(badge_ids));
   model.db.collection('badges').find({'_id' : {$in: badge_ids} }).toArray(function(err, badges){
     model.db.close();
     if (err) return cb(err);

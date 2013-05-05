@@ -3,7 +3,7 @@ var model_group_member= require('./model_group_member');
 var app_ajax          = require('./app_ajax');
 var logger            = require('./logger');
 
-exports.handle = function (data, res) {
+exports.handle = function (uid, data, res) {
   console.log('op_read_any_groups  input = ' + JSON.stringify(data));
   model_group.getAll(function(groups){
     if (groups instanceof Error) {

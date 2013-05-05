@@ -11,10 +11,12 @@ var op_save_group           = require('./op_save_group');
 var op_save_badge           = require('./op_save_badge');
 var op_read_groups_by_admin = require('./op_read_groups_by_admin');
 var op_read_badges_by_group = require('./op_read_badges_by_group');
+var op_read_members_by_group= require('./op_read_members_by_group');
 var op_read_any_groups      = require('./op_read_any_groups');
 var op_join_group           = require('./op_join_group');
 var op_read_my_badges       = require('./op_read_my_badges');
 var op_read_badge_members   = require('./op_read_badge_members');
+var op_assign_badge         = require('./op_assign_badge');
 
 exports.loginReplies   = 0;
 exports.saveGroup = 0;
@@ -28,24 +30,24 @@ exports.unknownOps     = 0;
 */
 exports.handle = function(req, res) {
   // Extract data from json string.
-  app_ajax.parse(req, function(data) {
-    console.log(JSON.stringify(data));
-    if (data instanceof Error) {
-      logger.warning(__filename + ' : handle : ' + data.message);
+  app_ajax.parse(req, function(body) {
+    console.log(JSON.stringify(body));
+    if (body instanceof Error) {
+      logger.warning(__filename + ' : handle : ' + body.message);
       return app_ajax.error(res); 
     }
     // Check for valid Facebook access token.
-    if (data.accessToken === undefined) {
+    if (body.accessToken === undefined) {
       logger.warning(__filename + ' : handle : facebook access token missing from ajax request');
       return app_ajax.error(res);
     }
     // Check appVer
-    //if (data.appVer !== process.env.APP_VER){
+    //if (body.appVer !== process.env.APP_VER){
     //  logger.warning(__filename + ' : handle : appVer is invalid');
     //  return app_ajax.error(res);
     //}    
     
-    fb.getUid(data.accessToken, function(uid) {
+    fb.getUid(body.accessToken, function(uid) {
       if (uid === undefined) { // user needs to login
         ++exports.loginReplies;
         return app_ajax.login(res);
@@ -54,36 +56,43 @@ exports.handle = function(req, res) {
         logger.error(__filename + ' : handle : ' + uid.message);
         return app_ajax.error(res);
       }
-      data.uid = uid;
+      body.uid = uid;
       var pathname = url.parse(req.url).pathname;
       if (pathname === '/op/save-group') {
         ++exports.saveGroup;
-        op_save_group.handle(data, res);
+        op_save_group.handle(body.uid, body.data, res);
       }else if (pathname === '/op/read-groups-by-admin') {
         ++exports.readAdminGroup;
-        op_read_groups_by_admin.handle(data, res);
+        op_read_groups_by_admin.handle(body.uid, body.data, res);
       }else if (pathname === '/op/read-any-groups') {
         //++exports.readAdminGroup;
-        op_read_any_groups.handle(data, res);
+        op_read_any_groups.handle(body.uid, body.data, res);
       }else if (pathname === '/op/join-group') {
         //++exports.readAdminGroup;
-        op_join_group.handle(data, res); 
+        op_join_group.handle(body.uid, body.data, res); 
       }else if (pathname === '/op/read-badges-by-group') {
         //++exports.readAdminGroup;
-        console.log("here");
-        op_read_badges_by_group.handle(data, res);
+        //console.log("here");
+        op_read_badges_by_group.handle(body.uid, body.data, res);
+      }else if (pathname === '/op/read-members-by-group') {
+        //++exports.readAdminGroup;
+        //console.log("here");
+        op_read_members_by_group.handle(body.uid, body.data, res);
       }else if (pathname === '/op/read-badge-members') {
         //++exports.readAdminGroup;
-        read_badge_members(data, res);
-      }else if (pathname === '/op/read-group-members') {
+        op_read_badge_members.handle(body.uid, body.data, res);
+      //}else if (pathname === '/op/read-group-members') {
         //++exports.readAdminGroup;
-        read_group_members(data, res);  
+        //read_group_members(body.uid, body.data, res);  
       }else if (pathname === '/op/save-badge') {
         //++exports.readAdminGroup;
-        op_save_badge.handle(data, res);        
+        op_save_badge.handle(body.uid, body.data, res);        
+      }else if (pathname === '/op/assign-badge') {
+        //++exports.readAdminGroup;
+        op_assign_badge.handle(body.uid, body.data, res);        
       }else if (pathname === '/op/read-my-badges') {
         //++exports.readAdminGroup;
-        op_read_my_badges.handle(data, res);        
+        op_read_my_badges.handle(body.uid, body.data, res);        
       }else if (pathname === '/op/save-user') { 
         ++exports.saveUser;
         save_user(data, res);
@@ -105,20 +114,6 @@ function save_user(data, res) {
     }
     console.log('group created');
     return app_ajax.data(res);
-  });
-};
-
-
-function read_badge_members(data, res) {
-  console.log('req_op read_badge_members input = ' + JSON.stringify(data));
-  var badge = { bid: data.bid };
-  model_badge.readBadgeMembers(badge, function(data) {
-    if (data instanceof Error) {
-      logger.error(__filename + ' : read_badge_members : ' + data.message);
-      return app_ajax.error(res);
-    }
-    console.log('badge_members is read = ' + JSON.stringify(badge.members));
-    return app_ajax.data(res, badge.members);
   });
 };
 
