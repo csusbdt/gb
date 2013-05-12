@@ -11,7 +11,7 @@ exports.handle = function (uid, data, res) {
       logger.error(__filename + ' : model_user_badge.getBadgeIdsByUserId : ' + bids.message);
       return app_ajax.error(res);
     }
-    console.log('user_badges is read = ' + JSON.stringify(bids));
+    console.log('user_badges is read = ' + JSON.stringify(bids)); 
     
     model_badge.getByIds(bids, function(badges){
       if (badges instanceof Error) {
