@@ -83,7 +83,22 @@ $(function() {
   };
   
   screens.myBadges.shareFBBtn = function(i){
-    alert('Share FB this badge ' + a.m.myBadges[i].name);  
+    FB.ui({
+      method: 'feed',
+      name: 'I just earned a badge: ' + a.m.myBadges[i].name,
+      link: 'http://'+ window.location.host,
+      picture: 'http://'+ window.location.host +'/'+ a.m.myBadges[i].pict,
+      caption: 'GradeBadge',
+      description: 'Badge Desription: ' + a.m.myBadges[i].desc
+    },
+    function(response) {
+      if (response && response.post_id) {
+        alert('Post was published.');
+      } else {
+        alert('Post was not published.');
+      }
+    }
+   );  
   };
   
   screens.findGroups.rebuild = function(){

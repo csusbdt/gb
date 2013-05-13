@@ -33,6 +33,7 @@ exports.handle = function (uid, data, res) {
       console.log('badges is read = ' + JSON.stringify(badges));
       return app_ajax.data(res, badges);
     });
+    
   });
 };
 
