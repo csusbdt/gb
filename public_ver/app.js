@@ -51,6 +51,27 @@ $(function() {
     currentScreen.rebuild();
   };
   
+  screens.profile.init = function(){
+    FB.api('/me', function(response) {
+      console.log('Screen profile title');
+      //$('#name').html('<a href="#" onclick="a.screen(\'profile\')"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
+      var $li = $('<li class="span4"></li>');
+      var $div = $('<div class="thumbnail"></div>');
+      $div.append('<h3>'+ response.name +'</h3>');
+      $div.append('<img src="http://graph.facebook.com/' + response.id + '/picture" />');
+      var $btn = $('<button class="btn btn-primary" type="button"></button>');
+      $btn.append('<i class="icon-certificate icon-white"></i> Share GradeBadge');
+      //$btn.attr('id', 'something');
+      $btn.click(function(){
+        a.fbPostGB();;
+      });
+      $div.append($btn);
+      $li.append($div);
+      $('#profile_profile').append($li);
+    });
+  
+  };
+  
   screens.myBadges.init = function(){
     console.log('myBadges init');
     if (a.m.myBadges === undefined) screens.myBadges.refresh();
@@ -74,31 +95,12 @@ $(function() {
       $btn.append('<i class="icon-certificate icon-white"></i> Share FB');
       //$btn.attr('id', 'something');
       $btn.click(function(){
-        screens.myBadges.shareFBBtn(i);
+        a.fbPostBadge(badge);
       });
       $div.append($btn);
       $li.append($div);
       $('#my_badges_list').append($li);    
     });
-  };
-  
-  screens.myBadges.shareFBBtn = function(i){
-    FB.ui({
-      method: 'feed',
-      name: 'I just earned a badge: ' + a.m.myBadges[i].name,
-      link: 'http://'+ window.location.host,
-      picture: 'http://'+ window.location.host +'/'+ a.m.myBadges[i].pict,
-      caption: 'GradeBadge',
-      description: 'Badge Desription: ' + a.m.myBadges[i].desc
-    },
-    function(response) {
-      if (response && response.post_id) {
-        alert('Post was published.');
-      } else {
-        alert('Post was not published.');
-      }
-    }
-   );  
   };
   
   screens.findGroups.rebuild = function(){
@@ -122,7 +124,8 @@ $(function() {
   
   screens.findGroups.joinGroupBtn = function(i){
     a.m.joinGroup(a.m.anyGroups[i]._id, function(){
-        a.screen('myBadges');
+      a.fbPostGroup(a.m.anyGroups[i]);  
+      a.screen('myBadges');
     });
   };
   
@@ -141,6 +144,19 @@ $(function() {
     FB.api('/me', function(response) {
       console.log('Screen init title');
       $('#name').html('<a href="#" onclick="a.screen(\'profile\')"><img width="25" height="25" style="margin-right:5" src="http://graph.facebook.com/' + response.id + '/picture" />  '+response.name+'</a>');
+      var $li = $('<li class="span4"></li>');
+      var $div = $('<div class="thumbnail"></div>');
+      $div.append('<h3>'+ response.name +'</h3>');
+      $div.append('<img src="http://graph.facebook.com/' + response.id + '/picture" />');
+      var $btn = $('<button class="btn btn-primary" type="button"></button>');
+      $btn.append('<i class="icon-certificate icon-white"></i> Share GradeBadge');
+      //$btn.attr('id', 'something');
+      $btn.click(function(){
+        a.fbPostGB();
+      });
+      $div.append($btn);
+      $li.append($div);
+      $('#profile_title').append($li);
     });
   };
   
@@ -217,7 +233,7 @@ $(function() {
         $btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
         //$btn.attr('id', 'something');
         $btn.click(function(){
-          screens.badgeMembers.assignBadgeBtn(member.uid, a.v.currBadge._id);
+          screens.badgeMembers.assignBadgeBtn(member.uid, a.v.currBadge);
         });
         $div.append($btn);
         $li.append($div);
@@ -230,9 +246,10 @@ $(function() {
     });
   };    
   
-  screens.badgeMembers.assignBadgeBtn = function(uid, bid){
-    a.m.assignBadge(uid, bid, function(){
-      //do something
+  screens.badgeMembers.assignBadgeBtn = function(uid, badge){
+    a.m.assignBadge(uid, badge._id, function(){
+      a.fbPostBadge(badge);
+      //a.screen('myBadges');
     });  
   };
   
@@ -648,6 +665,66 @@ a.v.currBadge = null;
 
 
 /* ----------------------------FB Business--------------------------------- */
+a.fbPostBadge = function(badge){
+  FB.ui(
+    {
+      method: 'feed',
+      name: 'I just earned a badge: ' + badge.name,
+      link: 'http://'+ window.location.host,
+      picture: 'http://'+ window.location.host +'/'+ badge.pict,
+      caption: 'GradeBadge',
+      description: 'Badge Desription: ' + badge.desc
+    },
+    function(response) {
+      if (response && response.post_id) {
+        console.log('Post was published.');
+      } else {
+        console.log('Post was NOT published.');
+      }
+    }
+  );  
+};
+
+a.fbPostGroup = function(group){
+  FB.ui(
+    {
+      method: 'feed',
+      name: 'I just joined a group: ' + group.name,
+      link: 'http://'+ window.location.host,
+      picture: 'http://'+ window.location.host +'/group.jpg',
+      caption: 'GradeBadge',
+      description: 'Group Desription: ' + group.desc
+    },
+    function(response) {
+      if (response && response.post_id) {
+        console.log('Post was published.');
+      } else {
+        console.log('Post was NOT published.');
+      }
+    }
+  );  
+};
+
+a.fbPostGB = function(){
+  FB.ui(
+    {
+      method: 'feed',
+      name: 'Check out GradeBadge',
+      link: 'http://'+ window.location.host,
+      picture: 'http://'+ window.location.host +'/group.jpg',
+      caption: 'GradeBadge',
+      description: 'Join millions other people who have received badges'
+    },
+    function(response) {
+      if (response && response.post_id) {
+        console.log('Post was published.');
+      } else {
+        console.log('Post was NOT published.');
+      }
+    }
+  );  
+};
+
 a.fbRelogin = function(cb) {
 console.log('a.relogin()');
   FB.getLoginStatus(function(response) {

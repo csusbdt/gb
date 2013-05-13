@@ -8,6 +8,7 @@ var app_http = require('./app_http');
 
 var extmap = {
   'png'  : { type: 'image/png',              gzip: true },
+  'jpg'  : { type: 'image/jpg',              gzip: true },
   'db'  : { type: 'image/PNG',              gzip: true },
   'js'   : { type: 'application/javascript', gzip: true },
   'css'  : { type: 'text/css',               gzip: true },
