@@ -12,9 +12,9 @@ exports.create = function(badge, cb) {
   );  
 };
 
-exports.getByIds = function(badge_ids, cb){
-  console.log('model badge, badge ids =' +JSON.stringify(badge_ids));
-  model.db.collection('badges').find({'_id' : {$in: badge_ids} }).toArray(function(err, badges){
+exports.getByIds = function(bids, cb){
+  console.log('model badge, badge ids =' +JSON.stringify(bids));
+  model.db.collection('badges').find({'_id' : {$in: bids} }).toArray(function(err, badges){
     model.db.close();
     if (err) return cb(err);
     console.log('model_badge getByIds badges array = '+ JSON.stringify(badges));  
@@ -22,7 +22,17 @@ exports.getByIds = function(badge_ids, cb){
   });
 };
 
+exports.getAll = function(cb){
+  model.db.collection('badges').find().toArray(function(err, badges){
+    model.db.close();
+    if (err) return cb(err);
+    console.log('model_badge getAll groups array = '+ JSON.stringify(badges));  
+    cb(badges);
+  });
+};
+
 // return badges list earned by uid
+/*
 exports.readMyBadges = function(user, cb) {
   model.db.collection('user_badge_links',{'bid' : true}).find(user).toArray(function(err, user_badge_links){
     if (err) {model.db.close(); return cb(err);}
@@ -34,7 +44,7 @@ exports.readMyBadges = function(user, cb) {
       if (err) return cb(err);
       console.log('model_badge readMyBadges badges array = '+ JSON.stringify(badges));  
       user.badges = badges;
-      cb();
+      cb(badges);
     });
   });    
 };
@@ -56,4 +66,4 @@ exports.readBadgeMembers = function(badge, cb) {
     
   });    
 };
-
+*/

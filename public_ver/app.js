@@ -67,6 +67,7 @@ $(function() {
     a.m.myBadges.forEach(function(badge, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
+      $div.append('<img src="'+ window.location.host +'/'+ badge.pict +'"/>');
       $div.append('<h3>'+ badge.name +'</h3>');
       $div.append('<p>'+ badge.desc +'</p>');
       var $btn = $('<button class="btn btn-primary" type="button"></button>');
@@ -82,7 +83,7 @@ $(function() {
   };
   
   screens.myBadges.shareFBBtn = function(i){
-    alert('Share FB this badge ' + a.m.myBadge[i].name);  
+    alert('Share FB this badge ' + a.m.myBadges[i].name);  
   };
   
   screens.findGroups.rebuild = function(){
@@ -264,6 +265,7 @@ $(function() {
     a.v.currGroup.badges.forEach(function(badge, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
+      $div.append('<img src="' + window.location.host +'/'+ badge.pict +'"/>');
       $div.append('<h3>'+ badge.name +'</h3>');
       $div.append('<p>'+ badge.desc +'</p>');
       var $btn = $('<button class="btn btn-primary" type="button"></button>');

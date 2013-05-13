@@ -6,6 +6,7 @@ var logger            = require('./logger');
 exports.handle = function (uid, data, res) {
   console.log('op_read_my_badges input = ' + JSON.stringify(data));
   var user = { uid: uid };
+  var bid = ["514e34507075ae0c0f000001"];
   model_user_badge.getBadgeIdsByUserId(user, function(bids) {
     if (bids instanceof Error) {
       logger.error(__filename + ' : model_user_badge.getBadgeIdsByUserId : ' + bids.message);
@@ -13,7 +14,18 @@ exports.handle = function (uid, data, res) {
     }
     console.log('user_badges is read = ' + JSON.stringify(bids)); 
     
+    /*
     model_badge.getByIds(bids, function(badges){
+      if (badges instanceof Error) {
+        logger.error(__filename + ' : model_badge.getByIds : ' + badges.message);
+        return app_ajax.error(res);
+      }
+      console.log('badges is read = ' + JSON.stringify(badges));
+      return app_ajax.data(res, badges);
+    });
+    */
+    
+    model_badge.getAll(function(badges){
       if (badges instanceof Error) {
         logger.error(__filename + ' : model_badge.getByIds : ' + badges.message);
         return app_ajax.error(res);
