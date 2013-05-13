@@ -67,9 +67,9 @@ $(function() {
     a.m.myBadges.forEach(function(badge, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
-      $div.append('<img src="'+ window.location.host +'/'+ badge.pict +'"/>');
+      $div.append('<img src="http://'+ window.location.host +'/'+ badge.pict +'"/>');
       $div.append('<h3>'+ badge.name +'</h3>');
-      $div.append('<p>'+ badge.desc +'</p>');
+      //$div.append('<p>'+ badge.desc +'</p>');
       var $btn = $('<button class="btn btn-primary" type="button"></button>');
       $btn.append('<i class="icon-certificate icon-white"></i> Share FB');
       //$btn.attr('id', 'something');
@@ -265,9 +265,9 @@ $(function() {
     a.v.currGroup.badges.forEach(function(badge, i){
       var $li = $('<li class="span4"></li>');
       var $div = $('<div class="thumbnail"></div>');
-      $div.append('<img src="' + window.location.host +'/'+ badge.pict +'"/>');
+      $div.append('<img src="http://' + window.location.host +'/'+ badge.pict +'"/>');
       $div.append('<h3>'+ badge.name +'</h3>');
-      $div.append('<p>'+ badge.desc +'</p>');
+      //$div.append('<p>'+ badge.desc +'</p>');
       var $btn = $('<button class="btn btn-primary" type="button"></button>');
       $btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
       //$btn.attr('id', 'something');
