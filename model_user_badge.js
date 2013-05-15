@@ -1,5 +1,6 @@
 var assert = require('assert');
 var model = require('./model');
+var ObjectID = require('mongodb').ObjectID;
 
 exports.create = function(user_badge, cb) {
   model.db.collection('user_badge_links').insert(
@@ -17,7 +18,7 @@ exports.getBadgeIdsByUserId = function(user, cb) {
     model.db.close();
     if (err) return cb(err);
     console.log('model_user_badge getBadgeIdsByUserId user_badge_links = '+ JSON.stringify(user_badge_links));
-    var bids = user_badge_links.map(function(user_badge_link) {return user_badge_link.bid;});
+    var bids = user_badge_links.map(function(user_badge_link) {return (new ObjectID(user_badge_link.bid));});
     cb(bids);
   });    
 };
