@@ -275,13 +275,13 @@ $(function() {
         var $li = $('<li class="span4"></li>');
         var $div = $('<div class="thumbnail"></div>');
         $div.append('<h3>'+ member.name +' <img src="'+ member.pic_square +'"/></h3>');
-        var $btn = $('<button class="btn btn-primary" type="button"></button>');
+        //var $btn = $('<button class="btn btn-primary" type="button"></button>');
         //$btn.append('<i class="icon-certificate icon-white"></i> Assign Badge');
         //$btn.attr('id', 'something');
         //$btn.click(function(){
           //screens.badgeMembers.assignBadgeBtn(member.uid);
         //});
-        $div.append($btn);
+        //$div.append($btn);
         $li.append($div);
         $('#group_members_list').append($li);      
       });

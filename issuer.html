@@ -72,9 +72,10 @@
     
     <!-- Title Page-->
     <div id="title" class="container" style="display:none;">
-      Welcome, this is Issuer page.
+      Welcome, this is Issuer page.  
       <!-- script>a.screen('groups');</script -->
-       <button onclick="a.screen('groups')" class="btn btn-primary">Group</button>
+       <button onclick="a.screen('groups')" class="btn btn-primary">View My Groups</button>
+       <br/><br/>
        <ul id="profile_title" class="thumbnails">
         <!-- auto generated -->
 		  </ul>
@@ -84,7 +85,8 @@
     <div id="groups" class="container" style="display:none;">
       <h2>Group List I manage:</h2>
       <a href="#addGroupModal" role="button" class="btn" data-toggle="modal">Add New Group</a>
-      <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh</button>      
+      <button id="groups_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i>Refresh</button>
+      <br/><br/>      
       <ul id="groups_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
@@ -97,7 +99,7 @@
       <a href="#addBadgeModal" role="button" class="btn" data-toggle="modal"><i class="icon-plus-sign icon-white"></i>Add New Badge</a>
       <button id="group_badges_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i> Refresh</button>
       <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groups')" type="button">Back</button>      
-      
+      <br/><br/>
       <ul id="group_badges_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
@@ -107,10 +109,10 @@
     <div id="groupMembers" class="container" style="display:none;">
       <div id="groupname_m"></div>
       <p>Members List </p>
-      <button id="group_badges_refresh" class="btn btn-primary" onclick="" type="button"><i class="icon-bullhorn icon-white"></i> Invite People (not done, fb)</button>      
+      <button id="group_badges_refresh" class="btn btn-primary" onclick="a.fbPostGroup(a.v.currGroup)" type="button"><i class="icon-bullhorn icon-white"></i> Invite Friends</button>      
       <button id="group_badges_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i> Refresh</button>
       <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groups')" type="button">Back</button>      
-      
+      <br/><br/>
       <ul id="group_members_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
@@ -124,6 +126,7 @@
       <button id="group_badges_refresh" class="btn btn-primary" onclick="a.refresh()" type="button"><i class="icon-refresh icon-white"></i> Refresh</button>
       <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groupBadges')" type="button">Back to Badge</button>      
       <button id="group_badges_back" class="btn btn-primary" onclick="a.screen('groups')" type="button">Back to Group</button>
+      <br/><br/>
       <ul id="badge_members_list" class="thumbnails">
         <!-- auto generated -->
 		  </ul>  
